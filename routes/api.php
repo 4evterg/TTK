@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthorController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -17,3 +18,10 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::middleware('auth:sanctum')->get('/athenticated', function () {
+    return true;
+});
+
+Route::post('register', 'App\Http\Controllers\RegisterController@register');
+Route::post('login', 'App\Http\Controllers\LoginController@login');
+Route::post('logout', 'App\Http\Controllers\LoginController@logout');
