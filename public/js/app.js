@@ -5579,11 +5579,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
-//
-//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -29829,57 +29824,7 @@ var render = function () {
     "div",
     { staticClass: "_container" },
     [
-      _c("b", [_vm._v(_vm._s(_vm.msg))]),
-      _vm._v(" "),
-      _c(
-        "form",
-        {
-          on: {
-            submit: function ($event) {
-              $event.preventDefault()
-              return _vm.saveData.apply(null, arguments)
-            },
-          },
-        },
-        [
-          _c("input", {
-            directives: [
-              {
-                name: "model",
-                rawName: "v-model",
-                value: _vm.form.title,
-                expression: "form.title",
-              },
-            ],
-            staticClass: "test",
-            attrs: {
-              autocomplete: "off",
-              type: "text",
-              "aria-label": "WRITE SHIT",
-            },
-            domProps: { value: _vm.form.title },
-            on: {
-              keydown: function ($event) {
-                return _vm.form.errors.clear("name")
-              },
-              input: function ($event) {
-                if ($event.target.composing) {
-                  return
-                }
-                _vm.$set(_vm.form, "title", $event.target.value)
-              },
-            },
-          }),
-          _vm._v(" "),
-          _c("button", { attrs: { type: "submit" } }, [_vm._v("DO SHIT!")]),
-          _vm._v(" "),
-          _vm.form.errors.has("name")
-            ? _c("span", { domProps: { textContent: _vm._s(_vm.form.errors) } })
-            : _vm._e(),
-        ]
-      ),
-      _vm._v(" "),
-      _c("h2", [_vm._v("Список книг")]),
+      _c("h1", [_vm._v("Список книг")]),
       _vm._v(" "),
       _c(
         "paginate",

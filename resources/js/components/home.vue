@@ -1,12 +1,7 @@
 <template>
     <div class="_container">
-      <b>{{msg}}</b>
-      <form @submit.prevent="saveData">
-        <input v-model="form.title" class="test" autocomplete="off" type="text" aria-label="WRITE SHIT" @keydown="form.errors.clear('name')">
-        <button type="submit">DO SHIT!</button>        
-       <span v-if="form.errors.has('name')" v-text="form.errors"></span>  
-      </form>
-      <h2>Список книг</h2>
+
+      <h1>Список книг</h1>
       <paginate
         name="books_list"
         :list="books"
