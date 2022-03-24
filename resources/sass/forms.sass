@@ -4,7 +4,16 @@ input[type=text], input[type=email], input[type=password]
 	padding-left: 15px
 	padding-right: 55px
 
-button[type=submit]
+%btn
+	width: 100%
+	color: #fff
+	background-color: #e21a1a
+	padding: 4px 10px
+	&:hover
+		background-color: #ef4b5e !important
+	
+button[type=submit], .subimt
+	@extend %btn
 	width: 100%
 	color: #fff
 	background-color: #e21a1a
@@ -20,7 +29,10 @@ button[type=submit]
 	&:hover
 		background-color: #ef4b5e !important
 
-	
+._btn
+	@extend %btn
+	padding: 4px 10px
+		
 // #S[id=form] Form 
 .form 
 	&__row 

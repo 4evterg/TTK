@@ -5379,33 +5379,120 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
+      books: '',
+      is_admin: '',
+      categories: '',
       user: null
     };
   },
   methods: {
-    logout: function logout() {
+    getAllBooks: function getAllBooks() {
       var _this = this;
 
+      axios.get('/api/books').then(function (res) {
+        if (_this.is_admin) {
+          _this.books = res.data;
+          return;
+        }
+
+        var books = [];
+        res.data.forEach(function (el) {
+          if (el['added_by'] == _this.user['id']) {
+            books.push(el);
+            _this.books = books;
+          }
+        });
+      })["catch"](function (error) {//console.log(error)
+      });
+    },
+    logout: function logout() {
+      var _this2 = this;
+
       axios.post('/api/logout').then(function () {
-        _this.$router.push({
+        _this2.$router.push({
           name: "Home"
         });
       })["catch"](function (error) {
-        _this.errors = error.response.data.errors;
+        _this2.errors = error.response.data.errors;
       });
     }
   },
   mounted: function mounted() {
-    var _this2 = this;
+    var _this3 = this;
 
     axios.get('/api/user').then(function (res) {
-      _this2.user = res.data;
+      _this3.user = res.data;
+      _this3.is_admin = res.data['is_admin'];
     })["catch"](function (error) {
-      _this2.errors = error.response.data.errors;
+      _this3.errors = error.response.data.errors;
     });
+    axios.get('/api/category').then(function (res) {
+      _this3.categories = res.data;
+    })["catch"](function (error) {
+      _this3.errors = error.response.data.errors;
+    });
+    this.getAllBooks();
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/footer-component.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/footer-component.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+//
+//
+//
+//
+//
+//
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  data: function data() {
+    return {};
   }
 });
 
@@ -5457,6 +5544,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+var _methods;
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -5479,53 +5587,86 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
+      paginate: ['books_list'],
       isAdmin: false,
       user: null,
       authors: '',
+      books: '',
+      category: '',
       form: new Form({
         title: ''
       })
     };
   },
-  methods: {
-    getData: function getData() {
+  methods: (_methods = {
+    getAuthor: function getAuthor() {
       var _this = this;
 
       axios.get('/api/author').then(function (res) {
         _this.authors = res.data;
-      })["catch"](function (error) {
-        console.log(error);
+      })["catch"](function (error) {//console.log(error)
       });
     },
-    saveData: function saveData() {
+    getCategory: function getCategory() {
       var _this2 = this;
 
-      var data = new FormData();
-      data.append("name", this.form.title);
-      axios.post('/api/author', data).then(function (res) {
-        _this2.form.reset();
+      axios.get('/api/category').then(function (res) {
+        _this2.category = res.data;
+      })["catch"](function (error) {//console.log(error)
+      });
+    },
+    getBooks: function getBooks() {
+      var _this3 = this;
 
-        _this2.getData();
-      })["catch"](function (error) {
-        console.log(error);
+      axios.get('/api/books').then(function (res) {
+        _this3.books = res.data;
+      })["catch"](function (error) {//console.log(error)
+      });
+    },
+    getAllBooks: function getAllBooks() {
+      var _this4 = this;
 
-        _this2.form.errors.record(error.response.data.errors);
+      axios.get('/api/books').then(function (res) {
+        _this4.books = res.data;
+      })["catch"](function (error) {//console.log(error)
       });
     }
-  },
+  }, _defineProperty(_methods, "getBooks", function getBooks() {
+    var _this5 = this;
+
+    axios.get('/api/books').then(function (res) {
+      _this5.books = res.data;
+    })["catch"](function (error) {//console.log(error)
+    });
+  }), _defineProperty(_methods, "saveData", function saveData() {
+    var _this6 = this;
+
+    var data = new FormData();
+    data.append("name", this.form.title);
+    axios.post('/api/author', data).then(function (res) {
+      _this6.form.reset();
+
+      _this6.getData();
+    })["catch"](function (error) {
+      console.log(error);
+
+      _this6.form.errors.record(error.response.data.errors);
+    });
+  }), _methods),
   props: {
     msg: String
   },
   mounted: function mounted() {
-    var _this3 = this;
+    var _this7 = this;
 
     console.log('Component mounted.');
     axios.get('/api/user').then(function (res) {
-      _this3.user = res.data;
-      _this3.isAdmin = res.data['is_admin'];
+      _this7.user = res.data;
+      _this7.isAdmin = res.data['is_admin'];
     })["catch"](function (error) {
-      _this3.errors = error.response.data.errors;
+      _this7.errors = error.response.data.errors;
     });
+    this.getAllBooks();
   }
 });
 
@@ -5914,9 +6055,12 @@ var Form = /*#__PURE__*/function () {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Form__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Form */ "./resources/js/Form.js");
-/* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
+/* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
 /* harmony import */ var _routes__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./routes */ "./resources/js/routes.js");
-/* harmony import */ var _components_header_component_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/header-component.vue */ "./resources/js/components/header-component.vue");
+/* harmony import */ var vue_paginate__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-paginate */ "./node_modules/vue-paginate/dist/vue-paginate.js");
+/* harmony import */ var vue_paginate__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vue_paginate__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _components_header_component_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/header-component.vue */ "./resources/js/components/header-component.vue");
+/* harmony import */ var _components_footer_component_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/footer-component.vue */ "./resources/js/components/footer-component.vue");
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 window.Vue = (__webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js")["default"]);
@@ -5924,13 +6068,17 @@ window.Vue = (__webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js
 window.Form = _Form__WEBPACK_IMPORTED_MODULE_0__["default"];
 
 
-Vue.use(vue_router__WEBPACK_IMPORTED_MODULE_2__["default"]);
 
-Vue.component('header-component', _components_header_component_vue__WEBPACK_IMPORTED_MODULE_3__["default"]);
+Vue.use(vue_router__WEBPACK_IMPORTED_MODULE_3__["default"]);
+Vue.use((vue_paginate__WEBPACK_IMPORTED_MODULE_2___default()));
+
+Vue.component('header-component', _components_header_component_vue__WEBPACK_IMPORTED_MODULE_4__["default"]);
+
+Vue.component('footer-component', _components_footer_component_vue__WEBPACK_IMPORTED_MODULE_5__["default"]);
 Vue.component('home-component', (__webpack_require__(/*! ./components/home.vue */ "./resources/js/components/home.vue")["default"]));
 var app = new Vue({
   el: '#app',
-  router: new vue_router__WEBPACK_IMPORTED_MODULE_2__["default"](_routes__WEBPACK_IMPORTED_MODULE_1__["default"])
+  router: new vue_router__WEBPACK_IMPORTED_MODULE_3__["default"](_routes__WEBPACK_IMPORTED_MODULE_1__["default"])
 });
 
 /***/ }),
@@ -28923,6 +29071,45 @@ component.options.__file = "resources/js/components/dashboard.vue"
 
 /***/ }),
 
+/***/ "./resources/js/components/footer-component.vue":
+/*!******************************************************!*\
+  !*** ./resources/js/components/footer-component.vue ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _footer_component_vue_vue_type_template_id_de4d1fd4___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./footer-component.vue?vue&type=template&id=de4d1fd4& */ "./resources/js/components/footer-component.vue?vue&type=template&id=de4d1fd4&");
+/* harmony import */ var _footer_component_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./footer-component.vue?vue&type=script&lang=js& */ "./resources/js/components/footer-component.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _footer_component_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _footer_component_vue_vue_type_template_id_de4d1fd4___WEBPACK_IMPORTED_MODULE_0__.render,
+  _footer_component_vue_vue_type_template_id_de4d1fd4___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/footer-component.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
 /***/ "./resources/js/components/header-component.vue":
 /*!******************************************************!*\
   !*** ./resources/js/components/header-component.vue ***!
@@ -29136,6 +29323,22 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/footer-component.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************!*\
+  !*** ./resources/js/components/footer-component.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_footer_component_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./footer-component.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/footer-component.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_footer_component_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
 /***/ "./resources/js/components/header-component.vue?vue&type=script&lang=js&":
 /*!*******************************************************************************!*\
   !*** ./resources/js/components/header-component.vue?vue&type=script&lang=js& ***!
@@ -29246,6 +29449,23 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/footer-component.vue?vue&type=template&id=de4d1fd4&":
+/*!*************************************************************************************!*\
+  !*** ./resources/js/components/footer-component.vue?vue&type=template&id=de4d1fd4& ***!
+  \*************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_footer_component_vue_vue_type_template_id_de4d1fd4___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_footer_component_vue_vue_type_template_id_de4d1fd4___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_footer_component_vue_vue_type_template_id_de4d1fd4___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./footer-component.vue?vue&type=template&id=de4d1fd4& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/footer-component.vue?vue&type=template&id=de4d1fd4&");
+
+
+/***/ }),
+
 /***/ "./resources/js/components/header-component.vue?vue&type=template&id=e645e4f0&":
 /*!*************************************************************************************!*\
   !*** ./resources/js/components/header-component.vue?vue&type=template&id=e645e4f0& ***!
@@ -29347,21 +29567,23 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _vm._v("\n    Dashboard "),
-    _c("br"),
-    _vm._v(" "),
-    _vm.user
-      ? _c("div", [
-          _vm._v("\n    Name: " + _vm._s(_vm.user.name) + " "),
+  return _vm.user
+    ? _c("div", { staticClass: "_container" }, [
+        _c("h1", [_vm._v("Панель управления")]),
+        _vm._v(" "),
+        _c("div", { staticClass: "user" }, [
+          _c("b", [_vm._v("Email:")]),
+          _vm._v(" " + _vm._s(_vm.user.email)),
           _c("br"),
-          _vm._v("\n    Email: " + _vm._s(_vm.user.email)),
-          _c("br"),
+          _vm._v(" "),
+          _c("b", [_vm._v("Имя:")]),
+          _vm._v(" " + _vm._s(_vm.user.name) + " "),
           _c("br"),
           _vm._v(" "),
           _c(
             "button",
             {
+              staticClass: "subimt",
               on: {
                 click: function ($event) {
                   $event.preventDefault()
@@ -29369,11 +29591,155 @@ var render = function () {
                 },
               },
             },
-            [_vm._v("Logout")]
+            [_vm._v("Выйти")]
           ),
-        ])
-      : _vm._e(),
-  ])
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "books" }, [
+          _c("h2", [_vm._v("Список книг")]),
+          _vm._v(" "),
+          _c(
+            "table",
+            { staticClass: "books__table _table" },
+            [
+              _vm._m(0),
+              _vm._v(" "),
+              _vm._l(_vm.books, function (book) {
+                return _c("tr", { key: book.id }, [
+                  _c("td", { staticClass: "books__name" }, [
+                    _vm._v(_vm._s(book.name)),
+                  ]),
+                  _vm._v(" "),
+                  _c("td", { staticClass: "books__author" }, [
+                    _vm._v(_vm._s(book.author)),
+                  ]),
+                  _vm._v(" "),
+                  _c("td", { staticClass: "books__year" }, [
+                    _vm._v(_vm._s(book.publish_year)),
+                  ]),
+                  _vm._v(" "),
+                  _c("td", { staticClass: "books__description" }, [
+                    _vm._v(_vm._s(book.description)),
+                  ]),
+                  _vm._v(" "),
+                  _vm._m(1, true),
+                  _vm._v(" "),
+                  _vm._m(2, true),
+                ])
+              }),
+            ],
+            2
+          ),
+        ]),
+        _vm._v(" "),
+        _vm.is_admin
+          ? _c("div", {}, [
+              _c("h2", [_vm._v("Управление разделами")]),
+              _vm._v(" "),
+              _c(
+                "table",
+                { staticClass: " _table" },
+                [
+                  _vm._m(3),
+                  _vm._v(" "),
+                  _vm._l(_vm.categories, function (cat) {
+                    return _c("tr", { key: cat.id }, [
+                      _c("td", {}, [_vm._v(_vm._s(cat.name))]),
+                      _vm._v(" "),
+                      _c("td", {}, [_vm._v(_vm._s(cat.description))]),
+                      _vm._v(" "),
+                      _vm._m(4, true),
+                      _vm._v(" "),
+                      _vm._m(5, true),
+                    ])
+                  }),
+                ],
+                2
+              ),
+            ])
+          : _vm._e(),
+      ])
+    : _vm._e()
+}
+var staticRenderFns = [
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("tr", [
+      _c("th", [_vm._v("Название книги")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Автор")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Описание")]),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("td", { staticClass: "books__description" }, [
+      _c("button", { staticClass: "_btn" }, [_vm._v("Удалить")]),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("td", { staticClass: "books__description" }, [
+      _c("button", { staticClass: "_btn" }, [_vm._v("Редактировать")]),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("tr", [
+      _c("th", [_vm._v("Категория")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Описание")]),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("td", {}, [
+      _c("button", { staticClass: "_btn" }, [_vm._v("Удалить")]),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("td", {}, [
+      _c("button", { staticClass: "_btn" }, [_vm._v("Редактировать")]),
+    ])
+  },
+]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/footer-component.vue?vue&type=template&id=de4d1fd4&":
+/*!****************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/footer-component.vue?vue&type=template&id=de4d1fd4& ***!
+  \****************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function () {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("footer", { staticClass: "footer" })
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -29398,7 +29764,7 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "header" }, [
+  return _c("header", { staticClass: "header" }, [
     _c("div", { staticClass: "header__container _container" }, [
       _vm._m(0),
       _vm._v(" "),
@@ -29459,91 +29825,103 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm.isAdmin
-    ? _c("div", [
-        _c("b", [_vm._v(_vm._s(_vm.msg))]),
-        _vm._v(" "),
-        _c(
-          "form",
-          {
-            on: {
-              submit: function ($event) {
-                $event.preventDefault()
-                return _vm.saveData.apply(null, arguments)
-              },
+  return _c(
+    "div",
+    { staticClass: "_container" },
+    [
+      _c("b", [_vm._v(_vm._s(_vm.msg))]),
+      _vm._v(" "),
+      _c(
+        "form",
+        {
+          on: {
+            submit: function ($event) {
+              $event.preventDefault()
+              return _vm.saveData.apply(null, arguments)
             },
           },
-          [
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.form.title,
-                  expression: "form.title",
-                },
-              ],
-              staticClass: "test",
-              attrs: {
-                autocomplete: "off",
-                type: "text",
-                "aria-label": "WRITE SHIT",
-              },
-              domProps: { value: _vm.form.title },
-              on: {
-                keydown: function ($event) {
-                  return _vm.form.errors.clear("name")
-                },
-                input: function ($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.$set(_vm.form, "title", $event.target.value)
-                },
-              },
-            }),
-            _vm._v(" "),
-            _c("button", { attrs: { type: "submit" } }, [_vm._v("DO SHIT!")]),
-            _vm._v(" "),
-            _vm.form.errors.has("name")
-              ? _c("span", {
-                  domProps: { textContent: _vm._s(_vm.form.errors) },
-                })
-              : _vm._e(),
-          ]
-        ),
-        _vm._v(" "),
-        _c(
-          "div",
-          [
-            _vm._l(_vm.authors, function (author) {
-              return _c("div", { key: author.id }, [
-                _vm._v("\n          " + _vm._s(author.name)),
-                _c("br"),
-              ])
-            }),
-            _vm._v(" "),
-            _c(
-              "form",
+        },
+        [
+          _c("input", {
+            directives: [
               {
-                on: {
-                  submit: function ($event) {
-                    $event.preventDefault()
-                    return _vm.getData.apply(null, arguments)
-                  },
-                },
+                name: "model",
+                rawName: "v-model",
+                value: _vm.form.title,
+                expression: "form.title",
               },
-              [
-                _c("button", { attrs: { type: "submit" } }, [
-                  _vm._v("GET SHIT!"),
-                ]),
-              ]
-            ),
-          ],
-          2
-        ),
-      ])
-    : _vm._e()
+            ],
+            staticClass: "test",
+            attrs: {
+              autocomplete: "off",
+              type: "text",
+              "aria-label": "WRITE SHIT",
+            },
+            domProps: { value: _vm.form.title },
+            on: {
+              keydown: function ($event) {
+                return _vm.form.errors.clear("name")
+              },
+              input: function ($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.$set(_vm.form, "title", $event.target.value)
+              },
+            },
+          }),
+          _vm._v(" "),
+          _c("button", { attrs: { type: "submit" } }, [_vm._v("DO SHIT!")]),
+          _vm._v(" "),
+          _vm.form.errors.has("name")
+            ? _c("span", { domProps: { textContent: _vm._s(_vm.form.errors) } })
+            : _vm._e(),
+        ]
+      ),
+      _vm._v(" "),
+      _c("h2", [_vm._v("Список книг")]),
+      _vm._v(" "),
+      _c(
+        "paginate",
+        { attrs: { name: "books_list", list: _vm.books, per: 5 } },
+        [
+          _c(
+            "table",
+            { staticClass: " _table" },
+            [
+              _c("tr", [
+                _c("th", [_vm._v("Название")]),
+                _vm._v(" "),
+                _c("th", [_vm._v("Автор")]),
+                _vm._v(" "),
+                _c("th", [_vm._v("Год публикации")]),
+                _vm._v(" "),
+                _c("th", [_vm._v("Описание")]),
+              ]),
+              _vm._v(" "),
+              _vm._l(_vm.paginated("books_list"), function (book) {
+                return _c("tr", [
+                  _c("td", {}, [_vm._v(_vm._s(book.name))]),
+                  _vm._v(" "),
+                  _c("td", {}, [_vm._v(_vm._s(book.author))]),
+                  _vm._v(" "),
+                  _c("td", {}, [_vm._v(_vm._s(book.publish_year))]),
+                  _vm._v(" "),
+                  _c("td", {}, [_vm._v(_vm._s(book.description))]),
+                ])
+              }),
+            ],
+            2
+          ),
+        ]
+      ),
+      _vm._v(" "),
+      _c("paginate-links", {
+        attrs: { for: "books_list", "show-step-links": true },
+      }),
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -29959,6 +30337,609 @@ function normalizeComponent (
   }
 }
 
+
+/***/ }),
+
+/***/ "./node_modules/vue-paginate/dist/vue-paginate.js":
+/*!********************************************************!*\
+  !*** ./node_modules/vue-paginate/dist/vue-paginate.js ***!
+  \********************************************************/
+/***/ (function(module) {
+
+/**
+ * vue-paginate v3.6.0
+ * (c) 2018 Taha Shashtari
+ * @license MIT
+ */
+(function (global, factory) {
+   true ? module.exports = factory() :
+  0;
+}(this, function () { 'use strict';
+
+  var warn = function () {}
+  var formatComponentName
+
+  var hasConsole = typeof console !== 'undefined'
+
+  warn = function (msg, vm, type) {
+    if ( type === void 0 ) type = 'error';
+
+    if (hasConsole) {
+      console[type]("[vue-paginate]: " + msg + " " + (
+        vm ? formatLocation(formatComponentName(vm)) : ''
+        ))
+    }
+  }
+
+  formatComponentName = function (vm) {
+    if (vm.$root === vm) {
+      return 'root instance'
+    }
+    var name = vm._isVue
+    ? vm.$options.name || vm.$options._componentTag
+    : vm.name
+    return (
+      (name ? ("component <" + name + ">") : "anonymous component") +
+      (vm._isVue && vm.$options.__file ? (" at " + (vm.$options.__file)) : '')
+      )
+  }
+
+  var formatLocation = function (str) {
+    if (str === 'anonymous component') {
+      str += " - use the \"name\" option for better debugging messages."
+    }
+    return ("\n(found in " + str + ")")
+  }
+
+  var Paginate = {
+    name: 'paginate',
+    props: {
+      name: {
+        type: String,
+        required: true
+      },
+      list: {
+        type: Array,
+        required: true
+      },
+      per: {
+        type: Number,
+        default: 3,
+        validator: function validator (value) {
+          return value > 0
+        }
+      },
+      tag: {
+        type: String,
+        default: 'ul'
+      },
+      container: {
+        type: Object,
+        default: null
+      }
+    },
+    data: function data () {
+      return {
+        initialListSize: this.list.length
+      }
+    },
+    computed: {
+      parent: function parent () {
+        return this.container ? this.container : this.$parent
+      },
+      currentPage: {
+        get: function get () {
+          if (this.parent.paginate[this.name]) {
+            return this.parent.paginate[this.name].page
+          }
+        },
+        set: function set (page) {
+          this.parent.paginate[this.name].page = page
+        }
+      },
+      pageItemsCount: function pageItemsCount () {
+        var numOfItems = this.list.length
+        var first = this.currentPage * this.per + 1
+        var last = Math.min((this.currentPage * this.per) + this.per, numOfItems)
+        return (first + "-" + last + " of " + numOfItems)
+      },
+
+      lastPage: function lastPage () {
+        return Math.ceil(this.list.length / this.per)
+      }
+    },
+    mounted: function mounted () {
+      if (this.per <= 0) {
+        warn(("<paginate name=\"" + (this.name) + "\"> 'per' prop can't be 0 or less."), this.parent)
+      }
+      if (!this.parent.paginate[this.name]) {
+        warn(("'" + (this.name) + "' is not registered in 'paginate' array."), this.parent)
+        return
+      }
+      this.paginateList()
+    },
+    watch: {
+      currentPage: function currentPage () {
+        this.paginateList()
+      },
+      list: function list () {
+        if (this.currentPage >= this.lastPage) {
+          this.currentPage = this.lastPage - 1
+        }
+        this.paginateList()
+      },
+      per: function per () {
+        this.currentPage = 0
+        this.paginateList()
+      }
+    },
+    methods: {
+      paginateList: function paginateList () {
+        var index = this.currentPage * this.per
+        var paginatedList = this.list.slice(index, index + this.per)
+        this.parent.paginate[this.name].list = paginatedList
+      },
+      goToPage: function goToPage (page) {
+        var lastPage = Math.ceil(this.list.length / this.per)
+        if (page > lastPage) {
+          warn(("You cannot go to page " + page + ". The last page is " + lastPage + "."), this.parent)
+          return
+        }
+        this.currentPage = page - 1
+      }
+    },
+    render: function render (h) {
+      return h(this.tag, {}, this.$slots.default)
+    }
+  }
+
+  var LEFT_ARROW = '«'
+  var RIGHT_ARROW = '»'
+  var ELLIPSES = '…'
+
+  var LimitedLinksGenerator = function LimitedLinksGenerator (listOfPages, currentPage, limit) {
+    this.listOfPages = listOfPages
+    this.lastPage = listOfPages.length - 1
+    this.currentPage = currentPage === this.lastPage
+      ? this.lastPage - 1
+      : currentPage
+    this.limit = limit
+  };
+
+  LimitedLinksGenerator.prototype.generate = function generate () {
+    var firstHalf = this._buildFirstHalf()
+    var secondHalf = this._buildSecondHalf()
+    return firstHalf.concat( secondHalf)
+  };
+
+  LimitedLinksGenerator.prototype._buildFirstHalf = function _buildFirstHalf () {
+    var firstHalf = this._allPagesButLast()
+      .slice(
+        this._currentChunkIndex(),
+        this._currentChunkIndex() + this.limit
+      )
+    // Add backward ellipses with first page if needed
+    if (this.currentPage >= this.limit) {
+      firstHalf.unshift(ELLIPSES)
+      firstHalf.unshift(0)
+    }
+    // Add ellipses if needed
+    if (this.lastPage - this.limit > this._currentChunkIndex()) {
+      firstHalf.push(ELLIPSES)
+    }
+    return firstHalf
+  };
+
+  LimitedLinksGenerator.prototype._buildSecondHalf = function _buildSecondHalf () {
+    var secondHalf = [this.lastPage]
+    return secondHalf
+  };
+
+  LimitedLinksGenerator.prototype._currentChunkIndex = function _currentChunkIndex () {
+    var currentChunk = Math.floor(this.currentPage / this.limit)
+    return currentChunk * this.limit 
+  };
+
+  LimitedLinksGenerator.prototype._allPagesButLast = function _allPagesButLast () {
+      var this$1 = this;
+
+    return this.listOfPages.filter(function (n) { return n !== this$1.lastPage; })
+  };
+
+  var PaginateLinks = {
+    name: 'paginate-links',
+    props: {
+      for: {
+        type: String,
+        required: true
+      },
+      limit: {
+        type: Number,
+        default: 0
+      },
+      simple: {
+        type: Object,
+        default: null,
+        validator: function validator (obj) {
+          return obj.prev && obj.next
+        }
+      },
+      stepLinks: {
+        type: Object,
+        default: function () {
+          return {
+            prev: LEFT_ARROW,
+            next: RIGHT_ARROW
+          }
+        },
+        validator: function validator$1 (obj) {
+          return obj.prev && obj.next
+        }
+      },
+      showStepLinks: {
+        type: Boolean
+      },
+      hideSinglePage: {
+        type: Boolean
+      },
+      classes: {
+        type: Object,
+        default: null
+      },
+      async: {
+        type: Boolean,
+        default: false
+      },
+      container: {
+        type: Object,
+        default: null
+      }
+    },
+    data: function data () {
+      return {
+        listOfPages: [],
+        numberOfPages: 0,
+        target: null
+      }
+    },
+    computed: {
+      parent: function parent () {
+        return this.container ? this.container.el : this.$parent
+      },
+      state: function state () {
+        return this.container ? this.container.state : this.$parent.paginate[this.for]
+      },
+      currentPage: {
+        get: function get () {
+          if (this.state) {
+            return this.state.page
+          }
+        },
+        set: function set (page) {
+          this.state.page = page
+        }
+      }
+    },
+    mounted: function mounted () {
+      var this$1 = this;
+
+      if (this.simple && this.limit) {
+        warn(("<paginate-links for=\"" + (this.for) + "\"> 'simple' and 'limit' props can't be used at the same time. In this case, 'simple' will take precedence, and 'limit' will be ignored."), this.parent, 'warn')
+      }
+      if (this.simple && !this.simple.next) {
+        warn(("<paginate-links for=\"" + (this.for) + "\"> 'simple' prop doesn't contain 'next' value."), this.parent)
+      }
+      if (this.simple && !this.simple.prev) {
+        warn(("<paginate-links for=\"" + (this.for) + "\"> 'simple' prop doesn't contain 'prev' value."), this.parent)
+      }
+      if (this.stepLinks && !this.stepLinks.next) {
+        warn(("<paginate-links for=\"" + (this.for) + "\"> 'step-links' prop doesn't contain 'next' value."), this.parent)
+      }
+      if (this.stepLinks && !this.stepLinks.prev) {
+        warn(("<paginate-links for=\"" + (this.for) + "\"> 'step-links' prop doesn't contain 'prev' value."), this.parent)
+      }
+      this.$nextTick(function () {
+        this$1.updateListOfPages()
+      })
+    },
+    watch: {
+      'state': {
+        handler: function handler () {
+          this.updateListOfPages()
+        },
+        deep: true
+      },
+      currentPage: function currentPage (toPage, fromPage) {
+        this.$emit('change', toPage + 1, fromPage + 1)
+      }
+    },
+    methods: {
+      updateListOfPages: function updateListOfPages () {
+        this.target = getTargetPaginateComponent(this.parent.$children, this.for)
+        if (!this.target) {
+          if (this.async) { return }
+          warn(("<paginate-links for=\"" + (this.for) + "\"> can't be used without its companion <paginate name=\"" + (this.for) + "\">"), this.parent)
+          warn("To fix that issue you may need to use :async=\"true\" on <paginate-links> component to allow for asyncronous rendering", this.parent, 'warn')
+          return
+        }
+        this.numberOfPages = Math.ceil(this.target.list.length / this.target.per)
+        this.listOfPages = getListOfPageNumbers(this.numberOfPages)
+      }
+    },
+    render: function render (h) {
+      var this$1 = this;
+
+      if (!this.target && this.async) { return null }
+
+      var links = this.simple
+        ? getSimpleLinks(this, h)
+        : this.limit > 1
+        ? getLimitedLinks(this, h)
+        : getFullLinks(this, h)
+
+      if (this.hideSinglePage && this.numberOfPages <= 1) {
+        return null
+      }
+
+      var el = h('ul', {
+        class: ['paginate-links', this.for]
+      }, links)
+
+      if (this.classes) {
+        this.$nextTick(function () {
+          addAdditionalClasses(el.elm, this$1.classes)
+        })
+      }
+      return el
+    }
+  }
+
+  function getFullLinks (vm, h) {
+    var allLinks = vm.showStepLinks
+      ? [vm.stepLinks.prev ].concat( vm.listOfPages, [vm.stepLinks.next])
+      : vm.listOfPages
+    return allLinks.map(function (link) {
+      var data = {
+        on: {
+          click: function (e) {
+            e.preventDefault()
+            vm.currentPage = getTargetPageForLink(
+              link,
+              vm.limit,
+              vm.currentPage,
+              vm.listOfPages,
+              vm.stepLinks
+            )
+          }
+        }
+      }
+      var liClasses = getClassesForLink(
+        link,
+        vm.currentPage,
+        vm.listOfPages.length - 1,
+        vm.stepLinks
+      )
+      var linkText = link === vm.stepLinks.next || link === vm.stepLinks.prev
+        ? link
+        : link + 1 // it means it's a number
+      return h('li', { class: liClasses }, [h('a', data, linkText)])
+    })
+  }
+
+  function getLimitedLinks (vm, h) {
+    var limitedLinks = new LimitedLinksGenerator(
+      vm.listOfPages,
+      vm.currentPage,
+      vm.limit,
+      vm.stepLinks
+    ).generate()
+
+    limitedLinks = vm.showStepLinks
+      ? [vm.stepLinks.prev ].concat( limitedLinks, [vm.stepLinks.next])
+      : limitedLinks
+
+    var limitedLinksMetadata = getLimitedLinksMetadata(limitedLinks)
+
+    return limitedLinks.map(function (link, index) {
+      var data = {
+        on: {
+          click: function (e) {
+            e.preventDefault()
+            vm.currentPage = getTargetPageForLink(
+              link,
+              vm.limit,
+              vm.currentPage,
+              vm.listOfPages,
+              vm.stepLinks,
+              limitedLinksMetadata[index]
+            )
+          }
+        }
+      }
+      var liClasses = getClassesForLink(
+        link,
+        vm.currentPage,
+        vm.listOfPages.length - 1,
+        vm.stepLinks
+      )
+      // If the link is a number,
+      // then incremented by 1 (since it's 0 based).
+      // otherwise, do nothing (so, it's a symbol).
+      var text = (link === parseInt(link, 10)) ? link + 1 : link
+      return h('li', { class: liClasses }, [h('a', data, text)])
+    })
+  }
+
+  function getSimpleLinks (vm, h) {
+    var lastPage = vm.listOfPages.length - 1
+    var prevData = {
+      on: {
+        click: function (e) {
+          e.preventDefault()
+          if (vm.currentPage > 0) { vm.currentPage -= 1 }
+        }
+      }
+    }
+    var nextData = {
+      on: {
+        click: function (e) {
+          e.preventDefault()
+          if (vm.currentPage < lastPage) { vm.currentPage += 1 }
+        }
+      }
+    }
+    var nextListData = { class: ['next', vm.currentPage >= lastPage ? 'disabled' : ''] }
+    var prevListData = { class: ['prev', vm.currentPage <= 0 ? 'disabled' : ''] }
+    var prevLink = h('li', prevListData, [h('a', prevData, vm.simple.prev)])
+    var nextLink = h('li', nextListData, [h('a', nextData, vm.simple.next)])
+    return [prevLink, nextLink]
+  }
+
+  function getTargetPaginateComponent (children, targetName) {
+    return children
+      .filter(function (child) { return (child.$vnode.componentOptions.tag === 'paginate'); })
+      .find(function (child) { return child.name === targetName; })
+  }
+
+  function getListOfPageNumbers (numberOfPages) {
+    // converts number of pages into an array
+    // that contains each individual page number
+    // For Example: 4 => [0, 1, 2, 3]
+    return Array.apply(null, { length: numberOfPages })
+      .map(function (val, index) { return index; })
+  }
+
+  function getClassesForLink(link, currentPage, lastPage, ref) {
+    var prev = ref.prev;
+    var next = ref.next;
+
+    var liClass = []
+    if (link === prev) {
+      liClass.push('left-arrow')
+    } else if (link === next) {
+      liClass.push('right-arrow')
+    } else if (link === ELLIPSES) {
+      liClass.push('ellipses')
+    } else {
+      liClass.push('number')
+    }
+
+    if (link === currentPage) {
+      liClass.push('active')
+    }
+
+    if (link === prev && currentPage <= 0) {
+      liClass.push('disabled')
+    } else if (link === next && currentPage >= lastPage) {
+      liClass.push('disabled')
+    }
+    return liClass
+  }
+
+  function getTargetPageForLink (link, limit, currentPage, listOfPages, ref, metaData) {
+    var prev = ref.prev;
+    var next = ref.next;
+    if ( metaData === void 0 ) metaData = null;
+
+    var currentChunk = Math.floor(currentPage / limit)
+    if (link === prev) {
+      return (currentPage - 1) < 0 ? 0 : currentPage - 1
+    } else if (link === next) {
+      return (currentPage + 1 > listOfPages.length - 1)
+        ? listOfPages.length - 1
+        : currentPage + 1
+    } else if (metaData && metaData === 'right-ellipses') {
+      return (currentChunk + 1) * limit
+    } else if (metaData && metaData === 'left-ellipses') {
+      var chunkContent = listOfPages.slice(currentChunk * limit, currentChunk * limit + limit)
+      var isLastPage = currentPage === listOfPages.length - 1
+      if (isLastPage && chunkContent.length === 1) {
+        currentChunk--
+      }
+      return (currentChunk - 1) * limit + limit - 1
+    }
+    // which is number
+    return link
+  }
+
+  /**
+   * Mainly used here to check whether the displayed
+   * ellipses is for showing previous or next links
+   */
+  function getLimitedLinksMetadata (limitedLinks) {
+    return limitedLinks.map(function (link, index) {
+      if (link === ELLIPSES && limitedLinks[index - 1] === 0) {
+        return 'left-ellipses'
+      } else if (link === ELLIPSES && limitedLinks[index - 1] !== 0) {
+        return 'right-ellipses'
+      }
+      return link
+    })
+  }
+
+  function addAdditionalClasses (linksContainer, classes) {
+    Object.keys(classes).forEach(function (selector) {
+      if (selector === 'ul') {
+        var selectorValue = classes['ul']
+        if (Array.isArray(selectorValue)) {
+          selectorValue.forEach(function (c) { return linksContainer.classList.add(c); })
+        } else {
+          linksContainer.classList.add(selectorValue)
+        }
+      }
+      linksContainer.querySelectorAll(selector).forEach(function (node) {
+        var selectorValue = classes[selector]
+        if (Array.isArray(selectorValue)) {
+          selectorValue.forEach(function (c) { return node.classList.add(c); })
+        } else {
+          node.classList.add(selectorValue)
+        }
+      })
+    })
+  }
+
+  function paginateDataGenerator (listNames) {
+    if ( listNames === void 0 ) listNames = [];
+
+    return listNames.reduce(function (curr, listName) {
+      curr[listName] = {
+        list: [],
+        page: 0
+      }
+      return curr
+    }, {})
+  }
+
+  var vuePaginate = {}
+
+  vuePaginate.install = function (Vue) {
+    Vue.mixin({
+      created: function created () {
+        if (this.paginate !== 'undefined' && this.paginate instanceof Array) {
+          this.paginate = paginateDataGenerator(this.paginate)
+        }
+      },
+      methods: {
+        paginated: function paginated (listName) {
+          if (!this.paginate || !this.paginate[listName]) {
+            warn(("'" + listName + "' is not registered in 'paginate' array."), this)
+            return
+          }
+          return this.paginate[listName].list
+        }
+      }
+    })
+    Vue.component('paginate', Paginate)
+    Vue.component('paginate-links', PaginateLinks)
+  }
+
+  if (typeof window !== 'undefined' && window.Vue) {
+    window.Vue.use(vuePaginate)
+  }
+
+  return vuePaginate;
+
+}));
 
 /***/ }),
 

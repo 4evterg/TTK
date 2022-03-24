@@ -124,19 +124,6 @@ body._lock {
   overflow: hidden;
 }
 
-#app {
-  height: 100%;
-}
-#app > div:nth-child(2) {
-  padding-top: 100px;
-  height: 100%;
-}
-#app .center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 a {
   color: #000;
   transition: 0.2s color;
@@ -151,7 +138,14 @@ h1 {
   color: #303030;
   font-weight: 700;
   line-height: 1.2em;
-  padding: 30px 20px 30px 0;
+  padding: 30px 20px 30px;
+  text-align: center;
+}
+
+h2 {
+  font-size: 20px;
+  font-weight: 700;
+  padding: 20px 10px 20px 0;
 }
 
 .wrapper {
@@ -193,7 +187,17 @@ input[type=text], input[type=email], input[type=password] {
   padding-right: 55px;
 }
 
-button[type=submit] {
+._btn, button[type=submit], .subimt {
+  width: 100%;
+  color: #fff;
+  background-color: #e21a1a;
+  padding: 4px 10px;
+}
+._btn:hover, button[type=submit]:hover, .subimt:hover {
+  background-color: #ef4b5e !important;
+}
+
+button[type=submit], .subimt {
   width: 100%;
   color: #fff;
   background-color: #e21a1a;
@@ -207,8 +211,12 @@ button[type=submit] {
   cursor: pointer;
   transition: color 0.25s ease-out, background-color 0.25s ease-out, border-color 0.25s ease-out;
 }
-button[type=submit]:hover {
+button[type=submit]:hover, .subimt:hover {
   background-color: #ef4b5e !important;
+}
+
+._btn {
+  padding: 4px 10px;
 }
 
 .form__row {
@@ -965,9 +973,43 @@ body.ie ._ibg img {
 }
 
 footer {
-  /* */
+  height: 40px;
+}
+
+.paginate-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+.paginate-links li {
+  cursor: pointer;
+}
+
+.user {
+  font-size: 20px;
 }
 
 .page {
   flex: 1 1 auto;
+}
+
+#app {
+  height: 100%;
+}
+#app > div:nth-child(2) {
+  padding-top: 100px;
+  height: 100%;
+}
+#app .center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+._table {
+  width: 100%;
+}
+._table td {
+  text-align: center;
 }

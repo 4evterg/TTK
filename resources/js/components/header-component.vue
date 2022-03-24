@@ -1,5 +1,5 @@
 <template>
-    <div class="header">
+    <header class="header">
         <div class="header__container _container">
             <div class="header__logo logo">
                 <img src="images/logo.png" alt="">
@@ -11,7 +11,7 @@
                 <router-link to='/register'>Регистрация</router-link>
             </div>
         </div>
-    </div>
+    </header>
 </template>
 
 <script>

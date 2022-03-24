@@ -1,19 +1,36 @@
 <template>
-    <div v-if="isAdmin">
+    <div class="_container">
       <b>{{msg}}</b>
       <form @submit.prevent="saveData">
         <input v-model="form.title" class="test" autocomplete="off" type="text" aria-label="WRITE SHIT" @keydown="form.errors.clear('name')">
         <button type="submit">DO SHIT!</button>        
        <span v-if="form.errors.has('name')" v-text="form.errors"></span>  
       </form>
-      <div>
-          <div v-for="author in authors" :key="author.id">
-              {{author.name}}<br>
-          </div>
-          <form @submit.prevent="getData">
-            <button type="submit">GET SHIT!</button>
-          </form>
-      </div>
+      <h2>Список книг</h2>
+      <paginate
+        name="books_list"
+        :list="books"
+        :per="5"
+        >
+        <table class=" _table">
+            <tr>
+                <th>Название</th>
+                <th>Автор</th>
+                <th>Год публикации</th>
+                <th>Описание</th>
+            </tr>
+            <tr v-for="book in paginated('books_list')">
+                <td class="">{{book.name}}</td>
+                <td class="">{{book.author}}</td>
+                <td class="">{{book.publish_year}}</td>
+                <td class="">{{book.description}}</td>
+            </tr>
+        </table>
+        </paginate>
+<paginate-links for="books_list"
+  :show-step-links="true"
+
+></paginate-links>
     </div>
 </template>
 
@@ -21,20 +38,51 @@
     export default {
         data(){
             return {
+                paginate: ['books_list'],
                 isAdmin: false,
                 user: null,
                 authors:'',
+                books:'',
+                category:'',
                 form: new Form({
                     title: '',
                 })
             }
         },
         methods:{
-            getData(){
+            getAuthor(){
                 axios.get('/api/author').then((res)=>{
                     this.authors = res.data
                 }).catch((error) => {
-                    console.log(error)
+                    //console.log(error)
+                })
+            },
+            getCategory(){
+                axios.get('/api/category').then((res)=>{
+                    this.category = res.data
+                }).catch((error) => {
+                    //console.log(error)
+                })
+            },
+            getBooks(){
+                axios.get('/api/books').then((res)=>{
+                    this.books = res.data
+                }).catch((error) => {
+                    //console.log(error)
+                })
+            },
+            getAllBooks(){
+                axios.get('/api/books').then((res)=>{
+                    this.books = res.data
+                }).catch((error) => {
+                    //console.log(error)
+                })
+            },
+            getBooks(){
+                axios.get('/api/books').then((res)=>{
+                    this.books = res.data
+                }).catch((error) => {
+                    //console.log(error)
                 })
             },
             saveData(){
@@ -60,6 +108,7 @@
             }).catch((error) =>{
                 this.errors = error.response.data.errors;
             })
+            this.getAllBooks()
         }
     }
 </script>
