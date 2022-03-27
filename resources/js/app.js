@@ -1,6 +1,5 @@
  require('./bootstrap');
 
-
  window.Vue = require('vue').default;
  
  import Form from './Form';
@@ -12,7 +11,7 @@
  
  Vue.use(VueRouter);
  Vue.use(VuePaginate);
-
+ 
  import HeaderComponent from './components/header-component.vue';
  Vue.component('header-component', HeaderComponent);
  

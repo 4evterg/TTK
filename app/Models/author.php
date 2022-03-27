@@ -10,5 +10,5 @@ class author extends Model
     use HasFactory;   
 
     protected $table = 'author';
-    protected $fillable=['name'];
+    protected $fillable=['name', 'country', 'comment'];
 }

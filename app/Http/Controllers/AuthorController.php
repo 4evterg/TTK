@@ -75,9 +75,11 @@ class AuthorController extends Controller
      * @param  \App\Models\author  $author
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, author $author)
+    public function update(Request $request, $id)
     {
-        //
+        $book = author::findOrFail($id);
+        $book->update($request->all());
+        $book->save();
     }
 
     /**
@@ -86,8 +88,10 @@ class AuthorController extends Controller
      * @param  \App\Models\author  $author
      * @return \Illuminate\Http\Response
      */
-    public function destroy(author $author)
+    public function destroy($id)
     {
-        //
+        $book = author::findOrFail($id);
+        $book->delete();
+        return author::latest()->get();
     }
 }

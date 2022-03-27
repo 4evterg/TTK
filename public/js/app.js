@@ -5412,62 +5412,282 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
-      books: '',
       is_admin: '',
-      categories: '',
-      user: null
+      category: '',
+      user: null,
+      tables: {
+        books: '',
+        category: '',
+        author: ''
+      },
+      add_check: {
+        books: false,
+        category: false,
+        author: false
+      },
+      edited: {
+        books: [],
+        category: [],
+        author: []
+      },
+      fields: {
+        books: {
+          name: '',
+          author: '',
+          publish_year: '',
+          description: '',
+          category: '',
+          hidden: ''
+        },
+        category: {
+          name: '',
+          description: '',
+          hidden: ''
+        },
+        author: {
+          name: '',
+          country: '',
+          comment: ''
+        }
+      }
     };
   },
   methods: {
-    getAllBooks: function getAllBooks() {
+    test: function test() {
+      console.log('test');
+    },
+    getAll: function getAll(type) {
       var _this = this;
 
-      axios.get('/api/books').then(function (res) {
+      axios.get("/api/".concat(type)).then(function (res) {
+        var result = res.data;
+
+        if (type == 'author') {
+          _this.tables['books'].forEach(function (book, index, arr) {
+            result.forEach(function (author) {
+              if (author['id'] == book['author']) {
+                arr[index]['author'] = author['name'];
+              }
+            });
+          });
+        }
+
+        if (type == 'category') {
+          _this.tables['books'].forEach(function (book, index, arr) {
+            result.forEach(function (cat) {
+              if (cat['id'] == book['category']) {
+                arr[index]['category'] = cat['name'];
+              }
+            });
+          });
+        }
+
         if (_this.is_admin) {
-          _this.books = res.data;
+          _this.tables[type] = result;
           return;
         }
 
         var books = [];
-        res.data.forEach(function (el) {
+        result.forEach(function (el) {
           if (el['added_by'] == _this.user['id']) {
             books.push(el);
-            _this.books = books;
+            _this.tables[type] = books;
           }
         });
       })["catch"](function (error) {//console.log(error)
       });
     },
-    logout: function logout() {
+    editElement: function editElement(type, table, event, state) {
+      var row = event.target.parentElement.parentElement;
+      event.target.innerText = "Сохранить";
+
+      if (state) {
+        event.target.innerText = "Редактировать";
+        var elements = this.fields[type];
+
+        for (var key in elements) {
+          elements[key] = row.querySelector("#" + key).innerText;
+        }
+
+        this.updateElement(table, elements, type);
+      }
+
+      for (var _key in this.fields[type]) {
+        var node = row.querySelector("#" + _key);
+        node.contentEditable = !state;
+      }
+
+      this.edited[type].push('wtf');
+      this.edited[type].pop();
+      this.edited[type][table.id] = !state;
+    },
+    deleteElement: function deleteElement(e, type) {
       var _this2 = this;
 
+      var data = new FormData();
+      data.append('_method', 'DELETE');
+      axios.post("/api/".concat(type, "/") + e.id, data).then(function (res) {
+        _this2.tables[type] = res.data;
+      })["catch"](function (error) {
+        _this2.form.errors.record(error.response.data.errors);
+      });
+    },
+    updateElement: function updateElement(e, elements, type) {
+      var _this3 = this;
+
+      var data = new FormData();
+      data.append('_method', 'PATCH');
+
+      for (var key in elements) {
+        data.append(key, elements[key]);
+      }
+
+      axios.post("/api/".concat(type, "/") + e.id, data)["catch"](function (error) {
+        _this3.form.errors.record(error.response.data.errors);
+      });
+    },
+    addElement: function addElement(event, type) {
+      var _this4 = this;
+
+      console.log(event + " " + type);
+      this.add_check[type] = !this.add_check[type];
+      event.target.innerText = "Сохранить";
+      var row = event.target.parentElement.parentElement;
+
+      for (var key in this.fields[type]) {
+        var node = row.querySelector("#" + key);
+        node.contentEditable = this.add_check[type];
+      }
+
+      if (!this.add_check[type]) {
+        event.target.innerText = "+ Добавить";
+        var elements = this.fields[type];
+
+        for (var _key2 in elements) {
+          elements[_key2] = row.querySelector("#" + _key2).innerText;
+          row.querySelector("#" + _key2).innerText = '';
+        }
+
+        var data = new FormData();
+
+        for (var _key3 in elements) {
+          data.append(_key3, elements[_key3]);
+        }
+
+        axios.post("/api/".concat(type), data).then(function (res) {
+          //this.form.reset()
+          _this4.getAll(type);
+        })["catch"](function (error) {
+          console.log(error); // this.form.errors.record(error.response.data.errors)
+        });
+      }
+    },
+    logout: function logout() {
+      var _this5 = this;
+
       axios.post('/api/logout').then(function () {
-        _this2.$router.push({
+        _this5.$router.push({
           name: "Home"
         });
       })["catch"](function (error) {
-        _this2.errors = error.response.data.errors;
+        _this5.errors = error.response.data.errors;
       });
     }
   },
   mounted: function mounted() {
-    var _this3 = this;
+    var _this6 = this;
 
     axios.get('/api/user').then(function (res) {
-      _this3.user = res.data;
-      _this3.is_admin = res.data['is_admin'];
+      _this6.user = res.data;
+      _this6.is_admin = res.data['is_admin'];
     })["catch"](function (error) {
-      _this3.errors = error.response.data.errors;
+      _this6.errors = error.response.data.errors;
     });
-    axios.get('/api/category').then(function (res) {
-      _this3.categories = res.data;
-    })["catch"](function (error) {
-      _this3.errors = error.response.data.errors;
-    });
-    this.getAllBooks();
+
+    for (var key in this.tables) {
+      this.getAll(key);
+    }
   }
 });
 
@@ -5544,10 +5764,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-var _methods;
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
+//
+//
+//
+//
+//
 //
 //
 //
@@ -5583,22 +5804,52 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   data: function data() {
     return {
       paginate: ['books_list'],
-      isAdmin: false,
+      is_admin: false,
       user: null,
       authors: '',
-      books: '',
+      books: [],
+      tempBooks: false,
       category: '',
+      sort_dir: false,
+      FilterList: [],
+      search: '',
+      authors_names: [],
       form: new Form({
         title: ''
       })
     };
   },
-  methods: (_methods = {
+  methods: {
+    sortByKey: function sortByKey(array, key, dir) {
+      return array.sort(function (a, b) {
+        var x = a[key];
+        var y = b[key];
+        if (dir) return x > y ? -1 : x < y ? 1 : 0;
+        return x < y ? -1 : x > y ? 1 : 0;
+      });
+    },
+    sortTable: function sortTable(key) {
+      this.books_list = this.sortByKey(this.books, key, this.sort_dir);
+      this.sort_dir = !this.sort_dir;
+    },
     getAuthor: function getAuthor() {
       var _this = this;
 
       axios.get('/api/author').then(function (res) {
         _this.authors = res.data;
+
+        _this.books.forEach(function (book, index, arr) {
+          res.data.forEach(function (author) {
+            if (author['id'] == book['author']) {
+              arr[index]['author'] = author['name'];
+            }
+          });
+        }); // this.authors.forEach(el => {
+        //      this.authors_names[el.id] = el.name;
+        //      console.log(this.authors_names[el.id]);
+        // });
+        //this.$forceUpdate();
+
       })["catch"](function (error) {//console.log(error)
       });
     },
@@ -5607,6 +5858,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       axios.get('/api/category').then(function (res) {
         _this2.category = res.data;
+
+        _this2.books.forEach(function (book, index, arr) {
+          res.data.forEach(function (cat) {
+            if (cat['id'] == book['category']) {
+              arr[index]['category'] = cat['name'];
+            }
+          });
+        });
       })["catch"](function (error) {//console.log(error)
       });
     },
@@ -5614,54 +5873,67 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var _this3 = this;
 
       axios.get('/api/books').then(function (res) {
-        _this3.books = res.data;
-      })["catch"](function (error) {//console.log(error)
-      });
-    },
-    getAllBooks: function getAllBooks() {
-      var _this4 = this;
-
-      axios.get('/api/books').then(function (res) {
-        _this4.books = res.data;
+        var data = res.data;
+        data.forEach(function (book, index, arr) {
+          if (book['hidden']) {
+            arr = arr.splice(index, 1);
+          }
+        });
+        _this3.books = data;
       })["catch"](function (error) {//console.log(error)
       });
     }
-  }, _defineProperty(_methods, "getBooks", function getBooks() {
-    var _this5 = this;
-
-    axios.get('/api/books').then(function (res) {
-      _this5.books = res.data;
-    })["catch"](function (error) {//console.log(error)
-    });
-  }), _defineProperty(_methods, "saveData", function saveData() {
-    var _this6 = this;
-
-    var data = new FormData();
-    data.append("name", this.form.title);
-    axios.post('/api/author', data).then(function (res) {
-      _this6.form.reset();
-
-      _this6.getData();
-    })["catch"](function (error) {
-      console.log(error);
-
-      _this6.form.errors.record(error.response.data.errors);
-    });
-  }), _methods),
+  },
   props: {
     msg: String
   },
-  mounted: function mounted() {
-    var _this7 = this;
+  computed: {},
+  watch: {
+    search: function search() {
+      var _this4 = this;
 
-    console.log('Component mounted.');
+      if (!this.tempBooks) {
+        this.tempBooks = this.books;
+      }
+
+      var authors = []; // Process search input
+
+      if (this.search != '' && this.search) {
+        this.books = this.tempBooks.filter(function (item) {
+          return item.name.toUpperCase().includes(_this4.search.toUpperCase());
+        });
+        authors = this.tempBooks.filter(function (item) {
+          return item.author.toUpperCase().includes(_this4.search.toUpperCase());
+        });
+        this.books = authors.concat(this.books);
+
+        if (!this.books) {
+          this.books = this.tempBooks;
+        }
+
+        console.log(this.$refs.paginator);
+
+        if (this.$refs.paginator.currentPage == -1) {
+          this.$refs.paginator.currentPage = 0;
+        }
+      } else {
+        this.books = this.tempBooks;
+        this.books_list = this.tempBooks;
+      }
+    }
+  },
+  mounted: function mounted() {
+    var _this5 = this;
+
     axios.get('/api/user').then(function (res) {
-      _this7.user = res.data;
-      _this7.isAdmin = res.data['is_admin'];
+      _this5.user = res.data;
+      _this5.is_admin = res.data['is_admin'];
     })["catch"](function (error) {
-      _this7.errors = error.response.data.errors;
+      _this5.errors = error.response.data.errors;
     });
-    this.getAllBooks();
+    this.getBooks();
+    this.getAuthor();
+    this.getCategory();
   }
 });
 
@@ -29595,33 +29867,107 @@ var render = function () {
           _vm._v(" "),
           _c(
             "table",
-            { staticClass: "books__table _table" },
+            { staticClass: "books__table _table _table__editable" },
             [
               _vm._m(0),
               _vm._v(" "),
-              _vm._l(_vm.books, function (book) {
+              _vm._l(_vm.tables["books"], function (book) {
                 return _c("tr", { key: book.id }, [
-                  _c("td", { staticClass: "books__name" }, [
+                  _c("td", { attrs: { id: "name" } }, [
                     _vm._v(_vm._s(book.name)),
                   ]),
                   _vm._v(" "),
-                  _c("td", { staticClass: "books__author" }, [
+                  _c("td", { attrs: { id: "author" } }, [
                     _vm._v(_vm._s(book.author)),
                   ]),
                   _vm._v(" "),
-                  _c("td", { staticClass: "books__year" }, [
+                  _c("td", { attrs: { id: "publish_year" } }, [
                     _vm._v(_vm._s(book.publish_year)),
                   ]),
                   _vm._v(" "),
-                  _c("td", { staticClass: "books__description" }, [
+                  _c("td", { attrs: { id: "description" } }, [
                     _vm._v(_vm._s(book.description)),
                   ]),
                   _vm._v(" "),
-                  _vm._m(1, true),
+                  _c("td", { attrs: { id: "category" } }, [
+                    _vm._v(_vm._s(book.category)),
+                  ]),
                   _vm._v(" "),
-                  _vm._m(2, true),
+                  _c("td", { attrs: { id: "hidden" } }, [
+                    _vm._v(_vm._s(book.hidden)),
+                  ]),
+                  _vm._v(" "),
+                  _c("td", { staticClass: "books__delete" }, [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "_btn",
+                        on: {
+                          click: function ($event) {
+                            return _vm.deleteElement(book, "books")
+                          },
+                        },
+                      },
+                      [_vm._v("Удалить")]
+                    ),
+                  ]),
+                  _vm._v(" "),
+                  _c("td", { staticClass: "books__edit" }, [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "_btn",
+                        on: {
+                          click: function ($event) {
+                            return _vm.editElement(
+                              "books",
+                              book,
+                              $event,
+                              _vm.edited["books"][book.id]
+                                ? _vm.edited["books"][book.id]
+                                : false
+                            )
+                          },
+                        },
+                      },
+                      [
+                        _vm._v(
+                          "\n                Редактировать\n              "
+                        ),
+                      ]
+                    ),
+                  ]),
                 ])
               }),
+              _vm._v(" "),
+              _c("tr", [
+                _c("td", { attrs: { id: "name" } }),
+                _vm._v(" "),
+                _c("td", { attrs: { id: "author" } }),
+                _vm._v(" "),
+                _c("td", { attrs: { id: "publish_year" } }),
+                _vm._v(" "),
+                _c("td", { attrs: { id: "description" } }),
+                _vm._v(" "),
+                _c("td", { attrs: { id: "category" } }),
+                _vm._v(" "),
+                _c("td", { attrs: { id: "hidden" } }),
+                _vm._v(" "),
+                _c("td", [
+                  _c(
+                    "button",
+                    {
+                      staticClass: "_btn addBtn",
+                      on: {
+                        click: function ($event) {
+                          return _vm.addElement($event, "books")
+                        },
+                      },
+                    },
+                    [_vm._v("\n              + Добавить\n            ")]
+                  ),
+                ]),
+              ]),
             ],
             2
           ),
@@ -29635,19 +29981,178 @@ var render = function () {
                 "table",
                 { staticClass: " _table" },
                 [
-                  _vm._m(3),
+                  _vm._m(1),
                   _vm._v(" "),
-                  _vm._l(_vm.categories, function (cat) {
+                  _vm._l(_vm.tables["category"], function (cat) {
                     return _c("tr", { key: cat.id }, [
-                      _c("td", {}, [_vm._v(_vm._s(cat.name))]),
+                      _c("td", { attrs: { id: "name" } }, [
+                        _vm._v(_vm._s(cat.name)),
+                      ]),
                       _vm._v(" "),
-                      _c("td", {}, [_vm._v(_vm._s(cat.description))]),
+                      _c("td", { attrs: { id: "description" } }, [
+                        _vm._v(_vm._s(cat.description)),
+                      ]),
                       _vm._v(" "),
-                      _vm._m(4, true),
+                      _c("td", { attrs: { id: "hidden" } }, [
+                        _vm._v(_vm._s(cat.hidden)),
+                      ]),
                       _vm._v(" "),
-                      _vm._m(5, true),
+                      _c("td", { staticClass: "books__delete" }, [
+                        _c(
+                          "button",
+                          {
+                            staticClass: "_btn",
+                            on: {
+                              click: function ($event) {
+                                return _vm.deleteElement(cat, "category")
+                              },
+                            },
+                          },
+                          [_vm._v("Удалить")]
+                        ),
+                      ]),
+                      _vm._v(" "),
+                      _c("td", { staticClass: "books__edit" }, [
+                        _c(
+                          "button",
+                          {
+                            staticClass: "_btn",
+                            on: {
+                              click: function ($event) {
+                                return _vm.editElement(
+                                  "category",
+                                  cat,
+                                  $event,
+                                  _vm.edited["category"][cat.id]
+                                    ? _vm.edited["category"][cat.id]
+                                    : false
+                                )
+                              },
+                            },
+                          },
+                          [
+                            _vm._v(
+                              "\n                  Редактировать\n                "
+                            ),
+                          ]
+                        ),
+                      ]),
                     ])
                   }),
+                  _vm._v(" "),
+                  _c("tr", [
+                    _c("td", { attrs: { id: "name" } }),
+                    _vm._v(" "),
+                    _c("td", { attrs: { id: "description" } }),
+                    _vm._v(" "),
+                    _c("td", { attrs: { id: "hidden" } }),
+                    _vm._v(" "),
+                    _c("td", [
+                      _c(
+                        "button",
+                        {
+                          staticClass: "_btn addBtn",
+                          on: {
+                            click: function ($event) {
+                              return _vm.addElement($event, "category")
+                            },
+                          },
+                        },
+                        [_vm._v("\n                + Добавить\n              ")]
+                      ),
+                    ]),
+                  ]),
+                ],
+                2
+              ),
+              _vm._v(" "),
+              _c("h2", [_vm._v("Управление авторами")]),
+              _vm._v(" "),
+              _c(
+                "table",
+                { staticClass: " _table" },
+                [
+                  _vm._m(2),
+                  _vm._v(" "),
+                  _vm._l(_vm.tables["author"], function (author) {
+                    return _c("tr", { key: author.id }, [
+                      _c("td", { attrs: { id: "name" } }, [
+                        _vm._v(_vm._s(author.name)),
+                      ]),
+                      _vm._v(" "),
+                      _c("td", { attrs: { id: "country" } }, [
+                        _vm._v(_vm._s(author.country)),
+                      ]),
+                      _vm._v(" "),
+                      _c("td", { attrs: { id: "comment" } }, [
+                        _vm._v(_vm._s(author.comment)),
+                      ]),
+                      _vm._v(" "),
+                      _c("td", { staticClass: "books__delete" }, [
+                        _c(
+                          "button",
+                          {
+                            staticClass: "_btn",
+                            on: {
+                              click: function ($event) {
+                                return _vm.deleteElement(author, "author")
+                              },
+                            },
+                          },
+                          [_vm._v("Удалить")]
+                        ),
+                      ]),
+                      _vm._v(" "),
+                      _c("td", { staticClass: "books__edit" }, [
+                        _c(
+                          "button",
+                          {
+                            staticClass: "_btn",
+                            on: {
+                              click: function ($event) {
+                                return _vm.editElement(
+                                  "author",
+                                  author,
+                                  $event,
+                                  _vm.edited["author"][author.id]
+                                    ? _vm.edited["author"][author.id]
+                                    : false
+                                )
+                              },
+                            },
+                          },
+                          [
+                            _vm._v(
+                              "\n                  Редактировать\n                "
+                            ),
+                          ]
+                        ),
+                      ]),
+                    ])
+                  }),
+                  _vm._v(" "),
+                  _c("tr", [
+                    _c("td", { attrs: { id: "name" } }),
+                    _vm._v(" "),
+                    _c("td", { attrs: { id: "country" } }),
+                    _vm._v(" "),
+                    _c("td", { attrs: { id: "comment" } }),
+                    _vm._v(" "),
+                    _c("td", [
+                      _c(
+                        "button",
+                        {
+                          staticClass: "_btn addBtn",
+                          on: {
+                            click: function ($event) {
+                              return _vm.addElement($event, "author")
+                            },
+                          },
+                        },
+                        [_vm._v("\n                + Добавить\n              ")]
+                      ),
+                    ]),
+                  ]),
                 ],
                 2
               ),
@@ -29666,23 +30171,13 @@ var staticRenderFns = [
       _vm._v(" "),
       _c("th", [_vm._v("Автор")]),
       _vm._v(" "),
+      _c("th", [_vm._v("Год публикации")]),
+      _vm._v(" "),
       _c("th", [_vm._v("Описание")]),
-    ])
-  },
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("td", { staticClass: "books__description" }, [
-      _c("button", { staticClass: "_btn" }, [_vm._v("Удалить")]),
-    ])
-  },
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("td", { staticClass: "books__description" }, [
-      _c("button", { staticClass: "_btn" }, [_vm._v("Редактировать")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Категория")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Скрыто")]),
     ])
   },
   function () {
@@ -29693,22 +30188,22 @@ var staticRenderFns = [
       _c("th", [_vm._v("Категория")]),
       _vm._v(" "),
       _c("th", [_vm._v("Описание")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Скрыт")]),
     ])
   },
   function () {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("td", {}, [
-      _c("button", { staticClass: "_btn" }, [_vm._v("Удалить")]),
-    ])
-  },
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("td", {}, [
-      _c("button", { staticClass: "_btn" }, [_vm._v("Редактировать")]),
+    return _c("tr", [
+      _c("th", [_vm._v("Имя")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Страна")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Описание")]),
+      _vm._v(" "),
+      _c("th", [_vm._v("Скрыт")]),
     ])
   },
 ]
@@ -29826,40 +30321,114 @@ var render = function () {
     [
       _c("h1", [_vm._v("Список книг")]),
       _vm._v(" "),
-      _c(
-        "paginate",
-        { attrs: { name: "books_list", list: _vm.books, per: 5 } },
-        [
-          _c(
-            "table",
-            { staticClass: " _table" },
+      _c("input", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.search,
+            expression: "search",
+          },
+        ],
+        attrs: { type: "text", placeholder: "Поиск (автор, название)" },
+        domProps: { value: _vm.search },
+        on: {
+          input: function ($event) {
+            if ($event.target.composing) {
+              return
+            }
+            _vm.search = $event.target.value
+          },
+        },
+      }),
+      _vm._v(" "),
+      this.books.length
+        ? _c(
+            "paginate",
+            {
+              ref: "paginator",
+              attrs: { name: "books_list", list: _vm.books, per: 5 },
+            },
             [
-              _c("tr", [
-                _c("th", [_vm._v("Название")]),
-                _vm._v(" "),
-                _c("th", [_vm._v("Автор")]),
-                _vm._v(" "),
-                _c("th", [_vm._v("Год публикации")]),
-                _vm._v(" "),
-                _c("th", [_vm._v("Описание")]),
-              ]),
-              _vm._v(" "),
-              _vm._l(_vm.paginated("books_list"), function (book) {
-                return _c("tr", [
-                  _c("td", {}, [_vm._v(_vm._s(book.name))]),
+              _c(
+                "table",
+                { staticClass: " _table" },
+                [
+                  _c("tr", [
+                    _c(
+                      "th",
+                      {
+                        staticClass: "sort__key",
+                        on: {
+                          click: function ($event) {
+                            return _vm.sortTable("name")
+                          },
+                        },
+                      },
+                      [_vm._v("Название")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "th",
+                      {
+                        staticClass: "sort__key",
+                        on: {
+                          click: function ($event) {
+                            return _vm.sortTable("author")
+                          },
+                        },
+                      },
+                      [_vm._v("Автор")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "th",
+                      {
+                        staticClass: "sort__key",
+                        on: {
+                          click: function ($event) {
+                            return _vm.sortTable("publish_year")
+                          },
+                        },
+                      },
+                      [_vm._v("Год публикации")]
+                    ),
+                    _vm._v(" "),
+                    _c("th", [_vm._v("Описание")]),
+                    _vm._v(" "),
+                    _c(
+                      "th",
+                      {
+                        staticClass: "sort__key",
+                        on: {
+                          click: function ($event) {
+                            return _vm.sortTable("category")
+                          },
+                        },
+                      },
+                      [_vm._v("Категория")]
+                    ),
+                  ]),
                   _vm._v(" "),
-                  _c("td", {}, [_vm._v(_vm._s(book.author))]),
-                  _vm._v(" "),
-                  _c("td", {}, [_vm._v(_vm._s(book.publish_year))]),
-                  _vm._v(" "),
-                  _c("td", {}, [_vm._v(_vm._s(book.description))]),
-                ])
-              }),
-            ],
-            2
-          ),
-        ]
-      ),
+                  _vm._l(_vm.paginated("books_list"), function (book) {
+                    return _c("tr", [
+                      _c("td", {}, [_vm._v(_vm._s(book.name))]),
+                      _vm._v(" "),
+                      _c("td", {}, [_vm._v(_vm._s(book.author))]),
+                      _vm._v(" "),
+                      _c("td", {}, [_vm._v(_vm._s(book.publish_year))]),
+                      _vm._v(" "),
+                      _c("td", {}, [_vm._v(_vm._s(book.description))]),
+                      _vm._v(" "),
+                      _c("td", {}, [_vm._v(_vm._s(book.category))]),
+                    ])
+                  }),
+                ],
+                2
+              ),
+            ]
+          )
+        : _vm._e(),
       _vm._v(" "),
       _c("paginate-links", {
         attrs: { for: "books_list", "show-step-links": true },

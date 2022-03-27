@@ -194,7 +194,7 @@ input[type=text], input[type=email], input[type=password] {
   padding: 4px 10px;
 }
 ._btn:hover, button[type=submit]:hover, .subimt:hover {
-  background-color: #ef4b5e !important;
+  background-color: #ef4b5e;
 }
 
 button[type=submit], .subimt {
@@ -973,7 +973,7 @@ body.ie ._ibg img {
 }
 
 footer {
-  height: 40px;
+  height: 100px;
 }
 
 .paginate-links {
@@ -986,8 +986,22 @@ footer {
   cursor: pointer;
 }
 
+.sort__key {
+  cursor: pointer;
+  -webkit-text-decoration: underline solid #e21a1a;
+          text-decoration: underline solid #e21a1a;
+}
+
 .user {
   font-size: 20px;
+}
+
+.addBtn {
+  margin-top: 20px;
+  background-color: #0055b6;
+}
+.addBtn:hover {
+  background-color: #0479ff;
 }
 
 .page {
@@ -999,7 +1013,6 @@ footer {
 }
 #app > div:nth-child(2) {
   padding-top: 100px;
-  height: 100%;
 }
 #app .center {
   display: flex;
@@ -1009,7 +1022,20 @@ footer {
 
 ._table {
   width: 100%;
+  border-collapse: collapse;
+}
+._table tr:nth-child(2n) {
+  background-color: #dedede;
 }
 ._table td {
+  padding: 5px;
   text-align: center;
+}
+._table td > * {
+  vertical-align: middle;
+  margin: 0;
+}
+
+*[contenteditable=true] {
+  background-color: #fff;
 }

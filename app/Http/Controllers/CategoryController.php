@@ -35,7 +35,15 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, 
+            [
+                'name' => 'required'
+            ],
+            [
+                'name.required' => 'Name Field is required!'
+            ]
+        );
+        category::create($request->all());
     }
 
     /**
@@ -67,9 +75,11 @@ class CategoryController extends Controller
      * @param  \App\Models\category  $category
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, category $category)
+    public function update(Request $request, $id)
     {
-        //
+        $book = category::findOrFail($id);
+        $book->update($request->all());
+        $book->save();
     }
 
     /**
@@ -78,8 +88,10 @@ class CategoryController extends Controller
      * @param  \App\Models\category  $category
      * @return \Illuminate\Http\Response
      */
-    public function destroy(category $category)
+    public function destroy($id)
     {
-        //
+        $book = category::findOrFail($id);
+        $book->delete();
+        return category::latest()->get();
     }
 }

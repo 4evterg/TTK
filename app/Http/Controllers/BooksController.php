@@ -14,7 +14,7 @@ class BooksController extends Controller
      */
     public function index()
     {
-        return books::latest()->get();
+        return books::oldest()->get();
     }
 
     /**
@@ -35,7 +35,15 @@ class BooksController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, 
+            [
+                'name' => 'required'
+            ],
+            [
+                'name.required' => 'Name Field is required!'
+            ]
+        );
+        books::create($request->all());
     }
 
     /**
@@ -67,9 +75,11 @@ class BooksController extends Controller
      * @param  \App\Models\books  $books
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, books $books)
+    public function update(Request $request, $id)
     {
-        //
+        $book = Books::findOrFail($id);
+        $book->update($request->all());
+        $book->save();
     }
 
     /**
@@ -78,8 +88,10 @@ class BooksController extends Controller
      * @param  \App\Models\books  $books
      * @return \Illuminate\Http\Response
      */
-    public function destroy(books $books)
+    public function destroy($id)
     {
-        //
+        $book = Books::findOrFail($id);
+        $book->delete();
+        return Books::latest()->get();
     }
 }
