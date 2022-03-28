@@ -5565,6 +5565,10 @@ __webpack_require__.r(__webpack_exports__);
           });
         }
 
+        if (!_this.is_admin) {
+          _this.tables[type] = [];
+        }
+
         if (_this.is_admin) {
           _this.tables[type] = result;
           return;
@@ -5573,8 +5577,9 @@ __webpack_require__.r(__webpack_exports__);
         var books = [];
         result.forEach(function (el) {
           if (el['added_by'] == _this.user['id']) {
+            console.log(el);
             books.push(el);
-            _this.tables[type] = books;
+            _this.tables['books'] = books;
           }
         });
       })["catch"](function (error) {});

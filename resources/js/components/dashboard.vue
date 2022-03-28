@@ -195,15 +195,20 @@ export default {
                     });
                 }
 
+                if (!this.is_admin){  
+                  this.tables[type] = []
+                }                
                 if (this.is_admin){                  
                   this.tables[type] = result;
                   return;
                 } 
+                
                 const books = [];
-                result.forEach(el => {
-                  if(el['added_by'] == this.user['id']){                    
+                result.forEach(el => {  
+                  if(el['added_by'] == this.user['id']){    
+                    console.log(el)                  
                     books.push(el);
-                    this.tables[type] = books;                    
+                    this.tables['books'] = books;                    
                   }
                 });                 
             }).catch((error) => {
