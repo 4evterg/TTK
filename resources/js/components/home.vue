@@ -13,17 +13,21 @@
         <table class=" _table">
             <tr>
                 <th class="sort__key" v-on:click="sortTable('name')">Название</th>
+                <th>Обложка</th>
                 <th class="sort__key" v-on:click="sortTable('author')">Автор</th>
                 <th class="sort__key" v-on:click="sortTable('publish_year')">Год публикации</th>
                 <th>Описание</th>
                 <th class="sort__key" v-on:click="sortTable('category')">Категория</th>
             </tr>
             <tr v-for="book in paginated('books_list')">
-                <td class="">{{book.name}}</td>
-                <td class="">{{book.author}}</td>
-                <td class="">{{book.publish_year}}</td>
-                <td class="">{{book.description}}</td>
-                <td class="">{{book.category}}</td>
+                <td>{{book.name}}</td>
+                <td id="cover">
+                    <img :src="book.cover" alt="">
+                </td>
+                <td>{{book.author}}</td>
+                <td>{{book.publish_year}}</td>
+                <td>{{book.description}}</td>
+                <td>{{book.category}}</td>
             </tr>
         </table>
         </paginate>

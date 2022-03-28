@@ -15,6 +15,7 @@
               <th>Год публикации</th>
               <th>Описание</th>
               <th>Категория</th>
+              <th>Обложка</th>
               <th>Скрыто</th>
             </tr>
 
@@ -25,7 +26,10 @@
               <td id="publish_year">{{book.publish_year}}</td>
               <td id="description">{{book.description}}</td>
               <td id="category">{{book.category}}</td>
-              <!-- <td id="img"><img :src="dataUrl(book.cover)"></td> -->
+              <td id="cover">
+                <label :for="'cover'+book.id">Выберите изображение<img :src="book.cover" alt=""></label>
+                <input disabled="true" :id="'cover'+book.id" type="file" class="form-control" v-on:change="onChange">
+              </td>
               <td id="hidden">{{book.hidden}}</td>
               <td class="books__delete">
                 <button class="_btn" v-on:click="deleteElement(book, 'books')">Удалить</button>
@@ -44,8 +48,11 @@
               <td id="publish_year"></td>
               <td id="description"></td>
               <td id="category"></td>
+              <td id="cover">
+                <label for="cover_input_add" class="cover_grey">Выберите изображение</label>
+                <input disabled="true" id="cover_input_add" type="file" class="form-control" v-on:change="onChange">
+              </td>
               <td id="hidden"></td>
-             <!-- <td id="cover"><input id="cover_img" type="file" accept=".jpg, .jpeg, .png"></td> -->
               <td>
                 <button class="_btn addBtn" v-on:click="addElement($event, 'books')">
                   + Добавить
@@ -156,8 +163,8 @@ export default {
               publish_year: '',
               description: '',
               category: '',
+              cover: '',
               hidden: ''
-              // cover: ''
             },
             category: {
               name: '',
@@ -173,6 +180,9 @@ export default {
         }
     },
     methods:{
+      onChange(e) {
+                this.file = e.target.files[0];
+            },
         getAll(type){
             axios.get(`/api/${type}`).then((res)=>{
                 let result = res.data;
@@ -221,6 +231,8 @@ export default {
           let row = event.target.parentElement.parentElement;
           event.target.innerText = "Сохранить";
 
+          row.querySelector("#cover input").disabled = state;
+
           if (state){            
             let elements = this.fields[type];
 
@@ -228,6 +240,11 @@ export default {
                 elements[key] = row.querySelector("#"+key).innerText;
               if (key == 'category' || key == 'author'){
                 elements[key] = row.querySelector("#"+key).children[0].value;
+              }
+              if (key == 'cover'){
+                if (row.querySelector("#cover input").files.length){
+                  elements[key] = row.querySelector("#cover input").files[0];
+                }              
               }
             }               
             
@@ -240,6 +257,9 @@ export default {
             event.target.innerText = "Редактировать";
             this.updateElement(table, elements, type);
           }
+
+
+
 
           let select_author = document.createElement('select');
           for (let key in this.tables['author']) {
@@ -269,7 +289,9 @@ export default {
               node.innerText = ""
               node.contentEditable = state;
               node.append(select_cat)
-
+            }
+            if (key == "cover" && !state){              
+              node.contentEditable = state;
             }
 
           }  
@@ -283,7 +305,6 @@ export default {
           axios.post(`/api/${type}/` + e.id, data).then((res) =>{
               this.tables[type] = res.data;
           }).catch((error) => {
-              this.form.errors.record(error.response.data.errors);
           })
         },
         updateElement(e, elements, type){
@@ -293,9 +314,13 @@ export default {
           for (let key in elements) {
             data.append(key, elements[key]);
           }         
+          const config = {
+              headers: {
+                  'content-type': 'multipart/form-data'
+              }
+          }
+          axios.post(`/api/${type}/`+e.id, data, config).catch((error) => {
 
-          axios.post(`/api/${type}/`+e.id, data).catch((error) => {
-            this.form.errors.record(error.response.data.errors)
           })
         },
         addElement(event, type){
@@ -304,15 +329,26 @@ export default {
 
           let row = event.target.parentElement.parentElement;
           
+          row.querySelector("#cover input").disabled = !this.add_check[type];
+
           if (!this.add_check[type]){  
             let elements = this.fields[type];        
            
             for (let key in elements) {
               elements[key] = row.querySelector("#"+key).innerText;
+              
+              if (key == 'category' || key == 'author'){
+                elements[key] = row.querySelector("#"+key).children[0].value;
+              }
+              if (key == 'cover'){
+                if (row.querySelector("#cover input").files.length){
+                  elements[key] = row.querySelector("#cover input").files[0];
+                }              
+              }
+
               row.querySelector("#"+key).innerText = '';            
             } 
             if (elements['name'].replace(/\s/g, '').length == 0 && elements['name'].replace(/\s/g, '')  == ""){
-              console.log("DF")
               let elem = row.querySelector("#name");
               elem.classList.add("active")
               setTimeout(() => row.querySelector("#name").classList.remove("active"), 2000);
@@ -331,9 +367,39 @@ export default {
                // this.form.errors.record(error.response.data.errors)
             })
           }
+
+          let select_author = document.createElement('select');
+          for (let key in this.tables['author']) {
+            let option = document.createElement('option'); 
+            option.value = this.tables['author'][key]['id'];
+            option.innerText = this.tables['author'][key]['name'];
+            select_author.append(option);
+          }
+          let select_cat = document.createElement('select');
+          for (let key in this.tables['category']) {
+            let option = document.createElement('option'); 
+            option.value = this.tables['category'][key]['id'];
+            option.innerText = this.tables['category'][key]['name'];
+            select_cat.append(option);
+          }
+
           for (let key in this.fields[type]) {
+            console.log(key)
             let node = row.querySelector("#"+key);
             node.contentEditable = this.add_check[type];
+            if (key == "author" && this.add_check[type]){
+              node.innerText = ""
+              node.contentEditable = !this.add_check[type];
+              node.append(select_author)              
+            }
+            if (key == "category" && this.add_check[type]){
+              node.innerText = ""
+              node.contentEditable = !this.add_check[type];
+              node.append(select_cat)
+            }
+            if (key == "cover" && this.add_check[type]){              
+              node.contentEditable = !this.add_check[type];
+            }
           }  
         },
         logout(){

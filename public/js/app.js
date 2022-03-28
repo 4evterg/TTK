@@ -5497,6 +5497,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   data: function data() {
     return {
@@ -5525,8 +5532,8 @@ __webpack_require__.r(__webpack_exports__);
           publish_year: '',
           description: '',
           category: '',
-          hidden: '' // cover: ''
-
+          cover: '',
+          hidden: ''
         },
         category: {
           name: '',
@@ -5542,6 +5549,9 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
+    onChange: function onChange(e) {
+      this.file = e.target.files[0];
+    },
     getAll: function getAll(type) {
       var _this = this;
 
@@ -5590,6 +5600,7 @@ __webpack_require__.r(__webpack_exports__);
     editElement: function editElement(type, table, event, state) {
       var row = event.target.parentElement.parentElement;
       event.target.innerText = "Сохранить";
+      row.querySelector("#cover input").disabled = state;
 
       if (state) {
         var elements = this.fields[type];
@@ -5599,6 +5610,12 @@ __webpack_require__.r(__webpack_exports__);
 
           if (key == 'category' || key == 'author') {
             elements[key] = row.querySelector("#" + key).children[0].value;
+          }
+
+          if (key == 'cover') {
+            if (row.querySelector("#cover input").files.length) {
+              elements[key] = row.querySelector("#cover input").files[0];
+            }
           }
         }
 
@@ -5649,6 +5666,10 @@ __webpack_require__.r(__webpack_exports__);
           node.contentEditable = state;
           node.append(select_cat);
         }
+
+        if (_key3 == "cover" && !state) {
+          node.contentEditable = state;
+        }
       }
 
       this.edited[type].push('wtf');
@@ -5662,13 +5683,9 @@ __webpack_require__.r(__webpack_exports__);
       data.append('_method', 'DELETE');
       axios.post("/api/".concat(type, "/") + e.id, data).then(function (res) {
         _this2.tables[type] = res.data;
-      })["catch"](function (error) {
-        _this2.form.errors.record(error.response.data.errors);
-      });
+      })["catch"](function (error) {});
     },
     updateElement: function updateElement(e, elements, type) {
-      var _this3 = this;
-
       var data = new FormData();
       data.append('_method', 'PATCH');
 
@@ -5676,27 +5693,41 @@ __webpack_require__.r(__webpack_exports__);
         data.append(key, elements[key]);
       }
 
-      axios.post("/api/".concat(type, "/") + e.id, data)["catch"](function (error) {
-        _this3.form.errors.record(error.response.data.errors);
-      });
+      var config = {
+        headers: {
+          'content-type': 'multipart/form-data'
+        }
+      };
+      axios.post("/api/".concat(type, "/") + e.id, data, config)["catch"](function (error) {});
     },
     addElement: function addElement(event, type) {
-      var _this4 = this;
+      var _this3 = this;
 
       this.add_check[type] = !this.add_check[type];
       event.target.innerText = "Сохранить";
       var row = event.target.parentElement.parentElement;
+      row.querySelector("#cover input").disabled = !this.add_check[type];
 
       if (!this.add_check[type]) {
         var elements = this.fields[type];
 
         for (var key in elements) {
           elements[key] = row.querySelector("#" + key).innerText;
+
+          if (key == 'category' || key == 'author') {
+            elements[key] = row.querySelector("#" + key).children[0].value;
+          }
+
+          if (key == 'cover') {
+            if (row.querySelector("#cover input").files.length) {
+              elements[key] = row.querySelector("#cover input").files[0];
+            }
+          }
+
           row.querySelector("#" + key).innerText = '';
         }
 
         if (elements['name'].replace(/\s/g, '').length == 0 && elements['name'].replace(/\s/g, '') == "") {
-          console.log("DF");
           var elem = row.querySelector("#name");
           elem.classList.add("active");
           setTimeout(function () {
@@ -5713,25 +5744,61 @@ __webpack_require__.r(__webpack_exports__);
         }
 
         axios.post("/api/".concat(type), data).then(function (res) {
-          _this4.getAll(type);
+          _this3.getAll(type);
         })["catch"](function (error) {// this.form.errors.record(error.response.data.errors)
         });
       }
 
-      for (var _key5 in this.fields[type]) {
-        var node = row.querySelector("#" + _key5);
+      var select_author = document.createElement('select');
+
+      for (var _key5 in this.tables['author']) {
+        var option = document.createElement('option');
+        option.value = this.tables['author'][_key5]['id'];
+        option.innerText = this.tables['author'][_key5]['name'];
+        select_author.append(option);
+      }
+
+      var select_cat = document.createElement('select');
+
+      for (var _key6 in this.tables['category']) {
+        var _option2 = document.createElement('option');
+
+        _option2.value = this.tables['category'][_key6]['id'];
+        _option2.innerText = this.tables['category'][_key6]['name'];
+        select_cat.append(_option2);
+      }
+
+      for (var _key7 in this.fields[type]) {
+        console.log(_key7);
+        var node = row.querySelector("#" + _key7);
         node.contentEditable = this.add_check[type];
+
+        if (_key7 == "author" && this.add_check[type]) {
+          node.innerText = "";
+          node.contentEditable = !this.add_check[type];
+          node.append(select_author);
+        }
+
+        if (_key7 == "category" && this.add_check[type]) {
+          node.innerText = "";
+          node.contentEditable = !this.add_check[type];
+          node.append(select_cat);
+        }
+
+        if (_key7 == "cover" && this.add_check[type]) {
+          node.contentEditable = !this.add_check[type];
+        }
       }
     },
     logout: function logout() {
-      var _this5 = this;
+      var _this4 = this;
 
       axios.post('/api/logout').then(function () {
-        _this5.$router.push({
+        _this4.$router.push({
           name: "Home"
         });
       })["catch"](function (error) {
-        _this5.errors = error.response.data.errors;
+        _this4.errors = error.response.data.errors;
       });
     } // dataUrl(image){
     //     console.log(image)
@@ -5743,13 +5810,13 @@ __webpack_require__.r(__webpack_exports__);
 
   },
   mounted: function mounted() {
-    var _this6 = this;
+    var _this5 = this;
 
     axios.get('/api/user').then(function (res) {
-      _this6.user = res.data;
-      _this6.is_admin = res.data['is_admin'];
+      _this5.user = res.data;
+      _this5.is_admin = res.data['is_admin'];
     })["catch"](function (error) {
-      _this6.errors = error.response.data.errors;
+      _this5.errors = error.response.data.errors;
     });
 
     for (var key in this.tables) {
@@ -5831,6 +5898,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+//
+//
+//
+//
 //
 //
 //
@@ -29515,6 +29586,23 @@ var render = function () {
                     _vm._v(_vm._s(book.category)),
                   ]),
                   _vm._v(" "),
+                  _c("td", { attrs: { id: "cover" } }, [
+                    _c("label", { attrs: { for: "cover" + book.id } }, [
+                      _vm._v("Выберите изображение"),
+                      _c("img", { attrs: { src: book.cover, alt: "" } }),
+                    ]),
+                    _vm._v(" "),
+                    _c("input", {
+                      staticClass: "form-control",
+                      attrs: {
+                        disabled: "true",
+                        id: "cover" + book.id,
+                        type: "file",
+                      },
+                      on: { change: _vm.onChange },
+                    }),
+                  ]),
+                  _vm._v(" "),
                   _c("td", { attrs: { id: "hidden" } }, [
                     _vm._v(_vm._s(book.hidden)),
                   ]),
@@ -29572,6 +29660,27 @@ var render = function () {
                 _c("td", { attrs: { id: "description" } }),
                 _vm._v(" "),
                 _c("td", { attrs: { id: "category" } }),
+                _vm._v(" "),
+                _c("td", { attrs: { id: "cover" } }, [
+                  _c(
+                    "label",
+                    {
+                      staticClass: "cover_grey",
+                      attrs: { for: "cover_input_add" },
+                    },
+                    [_vm._v("Выберите изображение")]
+                  ),
+                  _vm._v(" "),
+                  _c("input", {
+                    staticClass: "form-control",
+                    attrs: {
+                      disabled: "true",
+                      id: "cover_input_add",
+                      type: "file",
+                    },
+                    on: { change: _vm.onChange },
+                  }),
+                ]),
                 _vm._v(" "),
                 _c("td", { attrs: { id: "hidden" } }),
                 _vm._v(" "),
@@ -29803,6 +29912,8 @@ var staticRenderFns = [
       _vm._v(" "),
       _c("th", [_vm._v("Категория")]),
       _vm._v(" "),
+      _c("th", [_vm._v("Обложка")]),
+      _vm._v(" "),
       _c("th", [_vm._v("Скрыто")]),
     ])
   },
@@ -29995,6 +30106,8 @@ var render = function () {
                       [_vm._v("Название")]
                     ),
                     _vm._v(" "),
+                    _c("th", [_vm._v("Обложка")]),
+                    _vm._v(" "),
                     _c(
                       "th",
                       {
@@ -30039,15 +30152,19 @@ var render = function () {
                   _vm._v(" "),
                   _vm._l(_vm.paginated("books_list"), function (book) {
                     return _c("tr", [
-                      _c("td", {}, [_vm._v(_vm._s(book.name))]),
+                      _c("td", [_vm._v(_vm._s(book.name))]),
                       _vm._v(" "),
-                      _c("td", {}, [_vm._v(_vm._s(book.author))]),
+                      _c("td", { attrs: { id: "cover" } }, [
+                        _c("img", { attrs: { src: book.cover, alt: "" } }),
+                      ]),
                       _vm._v(" "),
-                      _c("td", {}, [_vm._v(_vm._s(book.publish_year))]),
+                      _c("td", [_vm._v(_vm._s(book.author))]),
                       _vm._v(" "),
-                      _c("td", {}, [_vm._v(_vm._s(book.description))]),
+                      _c("td", [_vm._v(_vm._s(book.publish_year))]),
                       _vm._v(" "),
-                      _c("td", {}, [_vm._v(_vm._s(book.category))]),
+                      _c("td", [_vm._v(_vm._s(book.description))]),
+                      _vm._v(" "),
+                      _c("td", [_vm._v(_vm._s(book.category))]),
                     ])
                   }),
                 ],

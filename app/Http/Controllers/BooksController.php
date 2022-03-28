@@ -35,6 +35,7 @@ class BooksController extends Controller
      */
     public function store(Request $request)
     {
+   
         $this->validate($request, 
             [
                 'name' => 'required'
@@ -43,7 +44,21 @@ class BooksController extends Controller
                 'name.required' => 'Название обязательно к заполнению!'
             ]
         );
-        books::create($request->all());
+        $requestData = $request->all();
+        if($request->file()) {
+            
+            $this->validate($request, [
+                'cover' => 'min:0|mimes:jpg,jpeg,png,csv,txt,xlx,xls,pdf|max:512'
+            ]);
+
+            $file_name = time().'_'.$request->cover->getClientOriginalName();
+
+            $file_path = $request->file('cover')->storeAs('uploads', $file_name, 'public');
+            $cover = '/storage/' . $file_path;
+            $requestData = $request->all();
+            $requestData['cover'] = $cover;
+        }
+        books::create($requestData);
     }
 
     /**
@@ -86,7 +101,23 @@ class BooksController extends Controller
                 'name.required' => 'Название обязательно к заполнению!'
             ]
         );
-        $book->update($request->all());
+
+        $requestData = $request->all();
+        if($request->file()) {
+            
+            $this->validate($request, [
+                'cover' => 'min:0|mimes:jpg,jpeg,png,csv,txt,xlx,xls,pdf|max:512'
+            ]);
+
+            $file_name = time().'_'.$request->cover->getClientOriginalName();
+
+            $file_path = $request->file('cover')->storeAs('uploads', $file_name, 'public');
+            $book->cover = '/storage/' . $file_path;
+            $requestData = $request->all();
+            $requestData['cover'] = $book->cover;
+        }
+
+        $book->update($requestData);
         $book->save();
     }
 

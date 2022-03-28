@@ -1079,6 +1079,43 @@ footer {
   padding-bottom: 10px;
 }
 
+#cover {
+  position: relative;
+}
+#cover label {
+  background-color: #888888;
+  color: #fff;
+  font-size: 13px;
+  line-height: 18px;
+}
+#cover img {
+  background-color: #000;
+}
+#cover img:hover {
+  opacity: 0.3;
+}
+#cover img, #cover label {
+  top: 0;
+  left: 0;
+  position: absolute;
+  -o-object-fit: cover;
+     object-fit: cover;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  transition: 0.1s opacity;
+}
+#cover input {
+  width: 0;
+  height: 0;
+  opacity: 0;
+  position: absolute;
+}
+
+.cover_grey {
+  height: 30px;
+}
+
 .page {
   flex: 1 1 auto;
 }
