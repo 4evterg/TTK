@@ -215,8 +215,7 @@ export default {
                 
                 const books = [];
                 result.forEach(el => {  
-                  if(el['added_by'] == this.user['id']){    
-                    console.log(el)                  
+                  if(el['added_by'] == this.user['id']){                               
                     books.push(el);
                     this.tables['books'] = books;                    
                   }
@@ -231,7 +230,9 @@ export default {
           let row = event.target.parentElement.parentElement;
           event.target.innerText = "Сохранить";
 
-          row.querySelector("#cover input").disabled = state;
+          if (row.querySelector("#cover input")){
+            row.querySelector("#cover input").disabled = state;
+          }
 
           if (state){            
             let elements = this.fields[type];
@@ -283,17 +284,17 @@ export default {
             node.contentEditable = !state;
             if (key == "author" && !state){
               node.innerText = ""
-              node.contentEditable = state;
+              node.contentEditable = false;
               node.append(select_author)
               
             }
             if (key == "category" && !state){
               node.innerText = ""
-              node.contentEditable = state;
+              node.contentEditable = false;
               node.append(select_cat)
             }
             if (key == "cover" && !state){              
-              node.contentEditable = state;
+              node.contentEditable = false;
             }
 
           }  
@@ -331,7 +332,10 @@ export default {
 
           let row = event.target.parentElement.parentElement;
           
-          row.querySelector("#cover input").disabled = !this.add_check[type];
+          if (row.querySelector("#cover input")){
+            row.querySelector("#cover input").disabled = !this.add_check[type];
+          }
+          
 
           if (!this.add_check[type]){  
             let elements = this.fields[type];        
@@ -345,7 +349,8 @@ export default {
               if (key == 'cover'){
                 if (row.querySelector("#cover input").files.length){
                   elements[key] = row.querySelector("#cover input").files[0];
-                }              
+                }  
+                continue;            
               }
 
               row.querySelector("#"+key).innerText = '';            
@@ -386,21 +391,20 @@ export default {
           }
 
           for (let key in this.fields[type]) {
-            console.log(key)
             let node = row.querySelector("#"+key);
             node.contentEditable = this.add_check[type];
             if (key == "author" && this.add_check[type]){
               node.innerText = ""
-              node.contentEditable = !this.add_check[type];
+              node.contentEditable = false;
               node.append(select_author)              
             }
             if (key == "category" && this.add_check[type]){
               node.innerText = ""
-              node.contentEditable = !this.add_check[type];
+              node.contentEditable = false;
               node.append(select_cat)
             }
             if (key == "cover" && this.add_check[type]){              
-              node.contentEditable = !this.add_check[type];
+              node.contentEditable = false;
             }
           }  
         },
@@ -411,13 +415,6 @@ export default {
             this.errors = error.response.data.errors;
           })
         },
-        // dataUrl(image){
-        //     console.log(image)
-        //     return 'data:image/jpeg;base64,' + btoa(
-        //         new Uint8Array(image)
-        //         .reduce((data, byte) => data + String.fromCharCode(byte), '')
-        //     );
-        // }
     },
 
     mounted(){

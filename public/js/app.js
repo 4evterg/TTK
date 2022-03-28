@@ -5587,7 +5587,6 @@ __webpack_require__.r(__webpack_exports__);
         var books = [];
         result.forEach(function (el) {
           if (el['added_by'] == _this.user['id']) {
-            console.log(el);
             books.push(el);
             _this.tables['books'] = books;
           }
@@ -5600,7 +5599,10 @@ __webpack_require__.r(__webpack_exports__);
     editElement: function editElement(type, table, event, state) {
       var row = event.target.parentElement.parentElement;
       event.target.innerText = "Сохранить";
-      row.querySelector("#cover input").disabled = state;
+
+      if (row.querySelector("#cover input")) {
+        row.querySelector("#cover input").disabled = state;
+      }
 
       if (state) {
         var elements = this.fields[type];
@@ -5659,18 +5661,18 @@ __webpack_require__.r(__webpack_exports__);
 
         if (_key3 == "author" && !state) {
           node.innerText = "";
-          node.contentEditable = state;
+          node.contentEditable = false;
           node.append(select_author);
         }
 
         if (_key3 == "category" && !state) {
           node.innerText = "";
-          node.contentEditable = state;
+          node.contentEditable = false;
           node.append(select_cat);
         }
 
         if (_key3 == "cover" && !state) {
-          node.contentEditable = state;
+          node.contentEditable = false;
         }
       }
 
@@ -5708,7 +5710,10 @@ __webpack_require__.r(__webpack_exports__);
       this.add_check[type] = !this.add_check[type];
       event.target.innerText = "Сохранить";
       var row = event.target.parentElement.parentElement;
-      row.querySelector("#cover input").disabled = !this.add_check[type];
+
+      if (row.querySelector("#cover input")) {
+        row.querySelector("#cover input").disabled = !this.add_check[type];
+      }
 
       if (!this.add_check[type]) {
         var elements = this.fields[type];
@@ -5724,6 +5729,8 @@ __webpack_require__.r(__webpack_exports__);
             if (row.querySelector("#cover input").files.length) {
               elements[key] = row.querySelector("#cover input").files[0];
             }
+
+            continue;
           }
 
           row.querySelector("#" + key).innerText = '';
@@ -5771,24 +5778,23 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       for (var _key7 in this.fields[type]) {
-        console.log(_key7);
         var node = row.querySelector("#" + _key7);
         node.contentEditable = this.add_check[type];
 
         if (_key7 == "author" && this.add_check[type]) {
           node.innerText = "";
-          node.contentEditable = !this.add_check[type];
+          node.contentEditable = false;
           node.append(select_author);
         }
 
         if (_key7 == "category" && this.add_check[type]) {
           node.innerText = "";
-          node.contentEditable = !this.add_check[type];
+          node.contentEditable = false;
           node.append(select_cat);
         }
 
         if (_key7 == "cover" && this.add_check[type]) {
-          node.contentEditable = !this.add_check[type];
+          node.contentEditable = false;
         }
       }
     },
@@ -5802,14 +5808,7 @@ __webpack_require__.r(__webpack_exports__);
       })["catch"](function (error) {
         _this4.errors = error.response.data.errors;
       });
-    } // dataUrl(image){
-    //     console.log(image)
-    //     return 'data:image/jpeg;base64,' + btoa(
-    //         new Uint8Array(image)
-    //         .reduce((data, byte) => data + String.fromCharCode(byte), '')
-    //     );
-    // }
-
+    }
   },
   mounted: function mounted() {
     var _this5 = this;
