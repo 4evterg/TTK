@@ -38,10 +38,13 @@ class BooksController extends Controller
    
         $this->validate($request, 
             [
-                'name' => 'required'
+                'name' => 'required',
+                'publish_year' => 'numeric|max:9999'
             ],
             [
-                'name.required' => 'Название обязательно к заполнению!'
+                'name.required' => 'Название обязательно к заполнению!',
+                
+                'publish_year.numeric' => 'Только цифры!'
             ]
         );
         $requestData = $request->all();
@@ -95,10 +98,17 @@ class BooksController extends Controller
         $book = Books::findOrFail($id);
         $this->validate($request, 
             [
-                'name' => 'required'
+                'name' => 'required',
+                'publish_year' => 'numeric|max:9999',
+                'hidden' =>  'numeric|min:0|max:1',
+
             ],
             [
-                'name.required' => 'Название обязательно к заполнению!'
+                'name.required' => 'Название обязательно к заполнению!',                
+                'publish_year.numeric' => 'Только цифры!',
+                'hidden.numeric' => 'Только 0 или 1!',
+                'hidden.min' => 'Только 0 или 1!',
+                'hidden.max' => 'Только 0 или 1!',
             ]
         );
 

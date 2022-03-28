@@ -5606,17 +5606,19 @@ __webpack_require__.r(__webpack_exports__);
         var elements = this.fields[type];
 
         for (var key in elements) {
-          elements[key] = row.querySelector("#" + key).innerText;
+          if (key == 'cover') {
+            if (row.querySelector("#cover input").files.length > 0) {
+              elements[key] = row.querySelector("#cover input").files[0];
+              continue;
+            }
+          }
 
           if (key == 'category' || key == 'author') {
             elements[key] = row.querySelector("#" + key).children[0].value;
+            continue;
           }
 
-          if (key == 'cover') {
-            if (row.querySelector("#cover input").files.length) {
-              elements[key] = row.querySelector("#cover input").files[0];
-            }
-          }
+          elements[key] = row.querySelector("#" + key).innerText;
         }
 
         if (elements['name'].replace(/\s/g, '').length == 0 && elements['name'].replace(/\s/g, '') == "") {

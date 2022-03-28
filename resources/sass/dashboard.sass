@@ -15,6 +15,7 @@
   box-sizing: border-box  
   position: relative
   &::before
+    font-size: 14px
     content: 'Обязательное поле'
     position: absolute
     top: 0
@@ -29,6 +30,9 @@
     line-height: 18px
     width: 100%
     z-index: 9
+    display: flex
+    justify-content: center
+    align-items: center
 .error.active
   box-shadow: inset 0px 0px 0px 1px $mainColor
   transition: .2 all

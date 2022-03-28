@@ -37,10 +37,14 @@ class CategoryController extends Controller
     {
         $this->validate($request, 
             [
-                'name' => 'required'
+                'name' => 'required',
+                'hidden' =>  'numeric|min:0|max:1'
             ],
             [
-                'name.required' => 'Название обязательно к заполнению!'
+                'name.required' => 'Название обязательно к заполнению!',
+                'hidden.numeric' => 'Только 0 или 1!',
+                'hidden.min' => 'Только 0 или 1!',
+                'hidden.max' => 'Только 0 или 1!'
             ]
         );
         category::create($request->all());
@@ -80,10 +84,14 @@ class CategoryController extends Controller
         $book = category::findOrFail($id);
         $this->validate($request, 
             [
-                'name' => 'required'
+                'name' => 'required',
+                'hidden' =>  'numeric|min:0|max:1'
             ],
             [
-                'name.required' => 'Название обязательно к заполнению!'
+                'name.required' => 'Название обязательно к заполнению!',
+                'hidden.numeric' => 'Только 0 или 1!',
+                'hidden.min' => 'Только 0 или 1!',
+                'hidden.max' => 'Только 0 или 1!'
             ]
         );
         $book->update($request->all());
