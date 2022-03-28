@@ -17,6 +17,7 @@
 //<ОБНУЛЕНИЕ, ОБЩИЕ ПАРАМЕТРЫ>
 @import "null"
 body 
+	overflow-x: hidden
 	text-rendering: optimizeSpeed
 	line-height: 1.5
 	color: #303030
@@ -111,6 +112,9 @@ h2
 ._table
 	width: 100%
 	border-collapse: collapse
+	overflow: scroll
+	th
+		padding: 0 10px
 	tr		
 		&:nth-child(2n)
 			background-color: darken($body-bg, 10%)			
@@ -126,3 +130,4 @@ h2
 
 *[contenteditable="true"]
 	background-color: #fff
+	box-shadow: inset 0px 0px 0px 1px #000

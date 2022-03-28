@@ -5556,6 +5556,13 @@ __webpack_require__.r(__webpack_exports__);
               }
             });
           });
+          result.forEach(function (book, index, arr) {
+            _this.tables['category'].forEach(function (author) {
+              if (author['id'] == book['category']) {
+                arr[index]['category'] = author['name'];
+              }
+            });
+          });
         }
 
         if (_this.is_admin) {
@@ -5584,10 +5591,13 @@ __webpack_require__.r(__webpack_exports__);
 
         for (var key in elements) {
           elements[key] = row.querySelector("#" + key).innerText;
+
+          if (key == 'category' || key == 'author') {
+            elements[key] = row.querySelector("#" + key).children[0].value;
+          }
         }
 
         if (elements['name'].replace(/\s/g, '').length == 0 && elements['name'].replace(/\s/g, '') == "") {
-          console.log("DF");
           var elem = row.querySelector("#name");
           elem.classList.add("active");
           setTimeout(function () {
@@ -5600,9 +5610,40 @@ __webpack_require__.r(__webpack_exports__);
         this.updateElement(table, elements, type);
       }
 
-      for (var _key in this.fields[type]) {
-        var node = row.querySelector("#" + _key);
+      var select_author = document.createElement('select');
+
+      for (var _key in this.tables['author']) {
+        var option = document.createElement('option');
+        option.value = this.tables['author'][_key]['id'];
+        option.innerText = this.tables['author'][_key]['name'];
+        select_author.append(option);
+      }
+
+      var select_cat = document.createElement('select');
+
+      for (var _key2 in this.tables['category']) {
+        var _option = document.createElement('option');
+
+        _option.value = this.tables['category'][_key2]['id'];
+        _option.innerText = this.tables['category'][_key2]['name'];
+        select_cat.append(_option);
+      }
+
+      for (var _key3 in this.fields[type]) {
+        var node = row.querySelector("#" + _key3);
         node.contentEditable = !state;
+
+        if (_key3 == "author" && !state) {
+          node.innerText = "";
+          node.contentEditable = state;
+          node.append(select_author);
+        }
+
+        if (_key3 == "category" && !state) {
+          node.innerText = "";
+          node.contentEditable = state;
+          node.append(select_cat);
+        }
       }
 
       this.edited[type].push('wtf');
@@ -5662,8 +5703,8 @@ __webpack_require__.r(__webpack_exports__);
         event.target.innerText = "+ Добавить";
         var data = new FormData();
 
-        for (var _key2 in elements) {
-          data.append(_key2, elements[_key2]);
+        for (var _key4 in elements) {
+          data.append(_key4, elements[_key4]);
         }
 
         axios.post("/api/".concat(type), data).then(function (res) {
@@ -5672,8 +5713,8 @@ __webpack_require__.r(__webpack_exports__);
         });
       }
 
-      for (var _key3 in this.fields[type]) {
-        var node = row.querySelector("#" + _key3);
+      for (var _key5 in this.fields[type]) {
+        var node = row.querySelector("#" + _key5);
         node.contentEditable = this.add_check[type];
       }
     },
@@ -29550,7 +29591,7 @@ var render = function () {
         ]),
         _vm._v(" "),
         _vm.is_admin
-          ? _c("div", {}, [
+          ? _c("div", { staticClass: "manage" }, [
               _c("h2", [_vm._v("Управление разделами")]),
               _vm._v(" "),
               _c(
@@ -29769,7 +29810,7 @@ var staticRenderFns = [
       _vm._v(" "),
       _c("th", [_vm._v("Описание")]),
       _vm._v(" "),
-      _c("th", [_vm._v("Скрыт")]),
+      _c("th", [_vm._v("Скрыто")]),
     ])
   },
   function () {
@@ -29783,7 +29824,7 @@ var staticRenderFns = [
       _vm._v(" "),
       _c("th", [_vm._v("Описание")]),
       _vm._v(" "),
-      _c("th", [_vm._v("Скрыт")]),
+      _c("th", [_vm._v("Скрыто")]),
     ])
   },
 ]

@@ -6,8 +6,8 @@
           <b>Имя:</b> {{user.name}} <br>
           <button @click.prevent="logout" class="subimt">Выйти</button>
         </div>   
-        <div class="books">
-          <h2>Список книг</h2>
+        <div class="books" >
+          <h2>Список книг</h2>          
           <table class="books__table _table _table__editable">
             <tr>
               <th>Название книги</th>
@@ -55,13 +55,13 @@
           </table>
         </div>     
         
-        <div v-if="is_admin" class="">
+        <div v-if="is_admin" class="manage">
           <h2>Управление разделами</h2>
             <table class=" _table">
               <tr>
                 <th>Категория</th>
                 <th>Описание</th>
-                <th>Скрыт</th>
+                <th>Скрыто</th>
               </tr>
               <tr v-for="cat in tables['category']" :key="cat.id">
                 <!-- id = полю массива -->
@@ -96,7 +96,7 @@
                 <th>Имя</th>
                 <th>Страна</th>
                 <th>Описание</th>
-                <th>Скрыт</th>
+                <th>Скрыто</th>
               </tr>
               <tr v-for="author in tables['author']" :key="author.id">
                 <!-- id = полю массива -->
@@ -186,6 +186,13 @@ export default {
                         }
                       });               
                     });
+                  result.forEach((book, index, arr) => {                                   
+                      this.tables['category'].forEach(author  => {
+                        if (author['id'] == book['category']){
+                            arr[index]['category'] = author['name'];
+                        }
+                      });               
+                    });
                 }
 
                 if (this.is_admin){                  
@@ -213,11 +220,13 @@ export default {
             let elements = this.fields[type];
 
             for (let key in elements) {
-              elements[key] = row.querySelector("#"+key).innerText;
+                elements[key] = row.querySelector("#"+key).innerText;
+              if (key == 'category' || key == 'author'){
+                elements[key] = row.querySelector("#"+key).children[0].value;
+              }
             }               
             
             if (elements['name'].replace(/\s/g, '').length == 0 && elements['name'].replace(/\s/g, '')  == ""){
-              console.log("DF")
               let elem = row.querySelector("#name");
               elem.classList.add("active")
               setTimeout(() => row.querySelector("#name").classList.remove("active"), 2000);
@@ -227,9 +236,37 @@ export default {
             this.updateElement(table, elements, type);
           }
 
+          let select_author = document.createElement('select');
+          for (let key in this.tables['author']) {
+            let option = document.createElement('option'); 
+            option.value = this.tables['author'][key]['id'];
+            option.innerText = this.tables['author'][key]['name'];
+            select_author.append(option);
+          }
+          let select_cat = document.createElement('select');
+          for (let key in this.tables['category']) {
+            let option = document.createElement('option'); 
+            option.value = this.tables['category'][key]['id'];
+            option.innerText = this.tables['category'][key]['name'];
+            select_cat.append(option);
+          }
+
           for (let key in this.fields[type]) {
             let node = row.querySelector("#"+key);
             node.contentEditable = !state;
+            if (key == "author" && !state){
+              node.innerText = ""
+              node.contentEditable = state;
+              node.append(select_author)
+              
+            }
+            if (key == "category" && !state){
+              node.innerText = ""
+              node.contentEditable = state;
+              node.append(select_cat)
+
+            }
+
           }  
           this.edited[type].push('wtf'); 
           this.edited[type].pop(); 
