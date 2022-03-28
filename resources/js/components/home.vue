@@ -2,7 +2,7 @@
     <div class="_container">
 
       <h1>Список книг</h1>
-      <input type="text" v-model="search" placeholder="Поиск (автор, название)" >
+      <input type="text" v-model="search" placeholder="Поиск (автор, название)" class="search">
       <paginate                
         ref="paginator"
         name="books_list"
@@ -38,6 +38,7 @@
     export default {
         data(){
             return {
+                // необходима для пагинации
                 paginate: ['books_list'],
                 is_admin: false,
                 user: null,
@@ -45,13 +46,9 @@
                 books:[],
                 tempBooks: false,
                 category:'',
+                // направление сортировки (по убыв, по возраст)
                 sort_dir: false,
-                FilterList: [],
-                search: '',
-                authors_names: [],
-                form: new Form({
-                    title: '',
-                })
+                search: ''
             }
         },
         methods:{
@@ -70,6 +67,7 @@
             getAuthor(){
                 axios.get('/api/author').then((res)=>{
                     this.authors = res.data;
+                    // Заменяем id внешних ключей книг на нормальный текст
                     this.books.forEach(function(book, index, arr) {                          
                         res.data.forEach(function(author) {
                             if (author['id'] == book['author']){
@@ -77,18 +75,13 @@
                             }
                         });                        
                     });
-                    // this.authors.forEach(el => {
-                    //      this.authors_names[el.id] = el.name;
-                    //      console.log(this.authors_names[el.id]);
-                    // });
-                    //this.$forceUpdate();
                 }).catch((error) => {
-                    //console.log(error)
                 })
             },
             getCategory(){
                 axios.get('/api/category').then((res)=>{
                     this.category = res.data
+                    // Заменяем id внешних ключей книг на нормальный текст
                     this.books.forEach(function(book, index, arr) {
                         res.data.forEach(function(cat) {
                             if (cat['id'] == book['category']){
@@ -97,7 +90,6 @@
                         });
                     });
                 }).catch((error) => {
-                    //console.log(error)
                 })
             },
             getBooks(){
@@ -112,23 +104,15 @@
                     this.books = data;
                     
                 }).catch((error) => {
-                    //console.log(error)
                 })
             }
-        },
-        props: {
-            msg: String
-        },
-        computed: {
-
         },
         watch: {
             search: function() {
                 if (!this.tempBooks){
                     this.tempBooks = this.books 
                 }        
-                let authors = [];                      
-                // Process search input
+                let authors = [];     
                 if (this.search != '' && this.search) {
                     this.books = this.tempBooks.filter((item) => {
                     return item.name
@@ -144,10 +128,6 @@
                     this.books = authors.concat(this.books);              
                     if (!this.books){
                         this.books = this.tempBooks
-                    }
-                    console.log(this.$refs.paginator);
-                    if (this.$refs.paginator.currentPage == -1){
-                        this.$refs.paginator.currentPage = 0;
                     }
                 } else {
                     this.books = this.tempBooks
@@ -168,9 +148,3 @@
         }
     }
 </script>
-
-<style>
-    .test{
-        border: 1px solid #000;
-    }
-</style>

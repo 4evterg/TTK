@@ -40,7 +40,7 @@ class BooksController extends Controller
                 'name' => 'required'
             ],
             [
-                'name.required' => 'Name Field is required!'
+                'name.required' => 'Название обязательно к заполнению!'
             ]
         );
         books::create($request->all());
@@ -78,6 +78,14 @@ class BooksController extends Controller
     public function update(Request $request, $id)
     {
         $book = Books::findOrFail($id);
+        $this->validate($request, 
+            [
+                'name' => 'required'
+            ],
+            [
+                'name.required' => 'Название обязательно к заполнению!'
+            ]
+        );
         $book->update($request->all());
         $book->save();
     }

@@ -977,6 +977,7 @@ footer {
 }
 
 .paginate-links {
+  padding: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -985,6 +986,25 @@ footer {
 .paginate-links li {
   cursor: pointer;
 }
+.paginate-links .left-arrow, .paginate-links .right-arrow {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #e21a1a;
+  transition: 0.2s background-color;
+}
+.paginate-links .left-arrow a, .paginate-links .right-arrow a {
+  color: #fff;
+  font-weight: 700;
+}
+.paginate-links .left-arrow:hover, .paginate-links .right-arrow:hover {
+  background-color: #ec5c5c;
+}
+.paginate-links .left-arrow.disabled, .paginate-links .right-arrow.disabled {
+  background-color: #b1b1b1;
+}
 
 .sort__key {
   cursor: pointer;
@@ -992,16 +1012,58 @@ footer {
           text-decoration: underline solid #e21a1a;
 }
 
+.search {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
 .user {
   font-size: 20px;
 }
 
 .addBtn {
-  margin-top: 20px;
   background-color: #0055b6;
 }
 .addBtn:hover {
   background-color: #0479ff;
+}
+
+.editBtn {
+  background-color: #ff8800;
+}
+.editBtn:hover {
+  background-color: #ffac4d;
+}
+
+.error {
+  box-sizing: border-box;
+  position: relative;
+}
+.error::before {
+  content: "Обязательное поле";
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #e21a1a;
+  pointer-events: none;
+  opacity: 0;
+  transition: 0.2 all;
+  padding: 2px;
+  color: #fff;
+  height: 40px;
+  line-height: 18px;
+  width: 100%;
+  z-index: 9;
+}
+
+.error.active {
+  box-shadow: inset 0px 0px 0px 1px #e21a1a;
+  transition: 0.2 all;
+}
+.error.active::before {
+  top: unset;
+  bottom: -40px;
+  opacity: 1;
 }
 
 .page {

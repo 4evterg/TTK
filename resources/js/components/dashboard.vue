@@ -17,30 +17,35 @@
               <th>Категория</th>
               <th>Скрыто</th>
             </tr>
+
+            <!-- id = полю массива -->
             <tr v-for="book in tables['books']" :key="book.id">
-              <td id="name">{{book.name}}</td>
+              <td id="name" class="error">{{book.name}}</td>
               <td id="author">{{book.author}}</td>
               <td id="publish_year">{{book.publish_year}}</td>
               <td id="description">{{book.description}}</td>
               <td id="category">{{book.category}}</td>
+              <!-- <td id="img"><img :src="dataUrl(book.cover)"></td> -->
               <td id="hidden">{{book.hidden}}</td>
               <td class="books__delete">
                 <button class="_btn" v-on:click="deleteElement(book, 'books')">Удалить</button>
               </td>
               <td class="books__edit">
-                  <button class="_btn" 
+                  <button class="_btn editBtn" 
                   v-on:click="editElement('books', book, $event, edited['books'][book.id] ? edited['books'][book.id] : false)">
                     Редактировать
                   </button>
               </td>
             </tr>
             <tr>
-              <td id="name"></td>
+              <!-- id = полю массива -->
+              <td id="name" class="error"></td>
               <td id="author"></td>
               <td id="publish_year"></td>
               <td id="description"></td>
               <td id="category"></td>
               <td id="hidden"></td>
+             <!-- <td id="cover"><input id="cover_img" type="file" accept=".jpg, .jpeg, .png"></td> -->
               <td>
                 <button class="_btn addBtn" v-on:click="addElement($event, 'books')">
                   + Добавить
@@ -59,23 +64,24 @@
                 <th>Скрыт</th>
               </tr>
               <tr v-for="cat in tables['category']" :key="cat.id">
-                <td class="" id="name">{{cat.name}}</td>
-                <td class="" id="description">{{cat.description}}</td>
-                <td class="" id="hidden">{{cat.hidden}}</td>
+                <!-- id = полю массива -->
+                <td id="name" class="error">{{cat.name}}</td>
+                <td id="description">{{cat.description}}</td>
+                <td id="hidden">{{cat.hidden}}</td>
                 <td class="books__delete">
                   <button class="_btn" v-on:click="deleteElement(cat, 'category')">Удалить</button>
                 </td>
                 <td class="books__edit">
-                    <button class="_btn" 
+                    <button class="_btn editBtn" 
                     v-on:click="editElement('category', cat, $event, edited['category'][cat.id] ? edited['category'][cat.id] : false)">
                       Редактировать
                     </button>
                 </td>
               </tr>
               <tr>
-                <td class="" id="name"></td>
-                <td class="" id="description"></td>
-                <td class="" id="hidden"></td>
+                <td id="name" class="error"></td>
+                <td id="description"></td>
+                <td id="hidden"></td>
                 <td>
                   <button class="_btn addBtn" v-on:click="addElement($event, 'category')">
                     + Добавить
@@ -93,23 +99,24 @@
                 <th>Скрыт</th>
               </tr>
               <tr v-for="author in tables['author']" :key="author.id">
-                <td class="" id="name">{{author.name}}</td>
-                <td class="" id="country">{{author.country}}</td>
-                <td class="" id="comment">{{author.comment}}</td>
+                <!-- id = полю массива -->
+                <td id="name" class="error">{{author.name}}</td>
+                <td id="country">{{author.country}}</td>
+                <td id="comment">{{author.comment}}</td>
                 <td class="books__delete">
                   <button class="_btn" v-on:click="deleteElement(author, 'author')">Удалить</button>
                 </td>
                 <td class="books__edit">
-                    <button class="_btn" 
+                    <button class="_btn editBtn" 
                     v-on:click="editElement('author', author, $event, edited['author'][author.id] ? edited['author'][author.id] : false)">
                       Редактировать
                     </button>
                 </td>
               </tr>
               <tr>
-                <td class="" id="name"></td>
-                <td class="" id="country"></td>
-                <td class="" id="comment"></td>
+                <td id="name" class="error"></td>
+                <td id="country"></td>
+                <td id="comment"></td>
                 <td>
                   <button class="_btn addBtn" v-on:click="addElement($event, 'author')">
                     + Добавить
@@ -127,10 +134,10 @@ export default {
           is_admin: '',
           category: '',
           user: null,
-          tables: {
-            books: '',
+          tables: {            
             category: '',
-            author: ''
+            author: '',
+            books: ''
           },            
           add_check:{
             books: false,
@@ -150,6 +157,7 @@ export default {
               description: '',
               category: '',
               hidden: ''
+              // cover: ''
             },
             category: {
               name: '',
@@ -165,30 +173,21 @@ export default {
         }
     },
     methods:{
-        test(){
-          console.log('test');
-        },
         getAll(type){
             axios.get(`/api/${type}`).then((res)=>{
                 let result = res.data;
-                if (type == 'author'){                                     
-                  this.tables['books'].forEach(function(book, index, arr) {                  
-                    result.forEach(function(author) {
-                            if (author['id'] == book['author']){
-                                arr[index]['author'] = author['name'];
-                            }
-                        });                        
+                
+                // Заменяем id внешних ключей на нормальный текст
+                if (type == 'books'){                                                        
+                  result.forEach((book, index, arr) => {                                   
+                      this.tables['author'].forEach(author  => {
+                        if (author['id'] == book['author']){
+                            arr[index]['author'] = author['name'];
+                        }
+                      });               
                     });
                 }
-                if (type == 'category'){
-                  this.tables['books'].forEach(function(book, index, arr) {
-                    result.forEach(function(cat) {
-                            if (cat['id'] == book['category']){
-                                arr[index]['category'] = cat['name'];
-                            }
-                        });
-                  });
-                }
+
                 if (this.is_admin){                  
                   this.tables[type] = result;
                   return;
@@ -201,20 +200,30 @@ export default {
                   }
                 });                 
             }).catch((error) => {
-                //console.log(error)
             })
         },
+        // @param {string} type - имя таблицы с которой работаем.
+        // @param {object} table - строка таблицы, обьект.
+        // @param {boolean} state - была ли кнопка нажата до этого
         editElement(type, table, event, state){
           let row = event.target.parentElement.parentElement;
           event.target.innerText = "Сохранить";
 
-          if (state){
-            event.target.innerText = "Редактировать";
+          if (state){            
             let elements = this.fields[type];
 
             for (let key in elements) {
               elements[key] = row.querySelector("#"+key).innerText;
-            } 
+            }               
+            
+            if (elements['name'].replace(/\s/g, '').length == 0 && elements['name'].replace(/\s/g, '')  == ""){
+              console.log("DF")
+              let elem = row.querySelector("#name");
+              elem.classList.add("active")
+              setTimeout(() => row.querySelector("#name").classList.remove("active"), 2000);
+              return
+            }
+            event.target.innerText = "Редактировать";
             this.updateElement(table, elements, type);
           }
 
@@ -236,59 +245,71 @@ export default {
           })
         },
         updateElement(e, elements, type){
-            let data = new FormData();
-            data.append('_method', 'PATCH');
-            
-            for (let key in elements) {
-              data.append(key, elements[key]);
-            }         
+          let data = new FormData();
+          data.append('_method', 'PATCH');
+          
+          for (let key in elements) {
+            data.append(key, elements[key]);
+          }         
 
-            axios.post(`/api/${type}/`+e.id, data).catch((error) => {
-              this.form.errors.record(error.response.data.errors)
-            })
+          axios.post(`/api/${type}/`+e.id, data).catch((error) => {
+            this.form.errors.record(error.response.data.errors)
+          })
         },
         addElement(event, type){
-          console.log(event + " " + type)
           this.add_check[type] = !this.add_check[type];  
           event.target.innerText = "Сохранить";        
 
           let row = event.target.parentElement.parentElement;
-
-          for (let key in this.fields[type]) {
-            let node = row.querySelector("#"+key);
-            node.contentEditable = this.add_check[type];
-          }  
           
-          if (!this.add_check[type]){   
-            event.target.innerText = "+ Добавить";         
-            let elements = this.fields[type];
-
+          if (!this.add_check[type]){  
+            let elements = this.fields[type];        
+           
             for (let key in elements) {
               elements[key] = row.querySelector("#"+key).innerText;
-              row.querySelector("#"+key).innerText = '';
+              row.querySelector("#"+key).innerText = '';            
             } 
+            if (elements['name'].replace(/\s/g, '').length == 0 && elements['name'].replace(/\s/g, '')  == ""){
+              console.log("DF")
+              let elem = row.querySelector("#name");
+              elem.classList.add("active")
+              setTimeout(() => row.querySelector("#name").classList.remove("active"), 2000);
+              return
+            }
+
+            event.target.innerText = "+ Добавить"; 
             let data = new FormData();
 
             for (let key in elements) {
               data.append(key, elements[key]);
             }  
             axios.post(`/api/${type}`, data).then((res) => {
-              //this.form.reset()
               this.getAll(type)
             }).catch((error) => {
-                console.log(error)
                // this.form.errors.record(error.response.data.errors)
             })
           }
+          for (let key in this.fields[type]) {
+            let node = row.querySelector("#"+key);
+            node.contentEditable = this.add_check[type];
+          }  
         },
         logout(){
-            axios.post('/api/logout').then(()=>{
-                this.$router.push({ name: "Home"})
-            }).catch((error) =>{
-              this.errors = error.response.data.errors;
-            })
-        }
+          axios.post('/api/logout').then(()=>{
+              this.$router.push({ name: "Home"})
+          }).catch((error) =>{
+            this.errors = error.response.data.errors;
+          })
+        },
+        // dataUrl(image){
+        //     console.log(image)
+        //     return 'data:image/jpeg;base64,' + btoa(
+        //         new Uint8Array(image)
+        //         .reduce((data, byte) => data + String.fromCharCode(byte), '')
+        //     );
+        // }
     },
+
     mounted(){
         axios.get('/api/user').then((res)=>{
           this.user = res.data;

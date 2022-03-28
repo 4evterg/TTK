@@ -40,7 +40,7 @@ class CategoryController extends Controller
                 'name' => 'required'
             ],
             [
-                'name.required' => 'Name Field is required!'
+                'name.required' => 'Название обязательно к заполнению!'
             ]
         );
         category::create($request->all());
@@ -78,6 +78,14 @@ class CategoryController extends Controller
     public function update(Request $request, $id)
     {
         $book = category::findOrFail($id);
+        $this->validate($request, 
+            [
+                'name' => 'required'
+            ],
+            [
+                'name.required' => 'Название обязательно к заполнению!'
+            ]
+        );
         $book->update($request->all());
         $book->save();
     }

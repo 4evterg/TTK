@@ -2,7 +2,37 @@
   font-size: 20px
 
 .addBtn
-  margin-top: 20px
   background-color: #0055b6
   &:hover
     background-color: lighten(#0055b6, 15%)
+
+.editBtn
+  background-color: #ff8800
+  &:hover
+    background-color: lighten(#ff8800, 15%)
+
+.error
+  box-sizing: border-box  
+  position: relative
+  &::before
+    content: 'Обязательное поле'
+    position: absolute
+    top: 0
+    left: 0
+    background-color: $mainColor
+    pointer-events: none
+    opacity: 0
+    transition: .2 all
+    padding: 2px
+    color: #fff
+    height: 40px
+    line-height: 18px
+    width: 100%
+    z-index: 9
+.error.active
+  box-shadow: inset 0px 0px 0px 1px $mainColor
+  transition: .2 all
+  &::before    
+    top: unset
+    bottom: -40px
+    opacity: 1 

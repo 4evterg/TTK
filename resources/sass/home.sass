@@ -3,15 +3,35 @@
 //====================================================================================================
 // ##[id=some-section]
 .paginate-links
+  padding: 20px
   display: flex
   justify-content: center
   align-items: center
   gap: 5px
   li
     cursor: pointer
+  .left-arrow, .right-arrow
+    width: 30px
+    height: 30px    
+    display: flex
+    justify-content: center
+    align-items: center
+    background-color: $mainColor
+    transition: .2s background-color
+    a
+      color: #fff
+      font-weight: 700
+    &:hover
+      background-color: lighten($mainColor , 15%)
+    &.disabled
+      background-color: #b1b1b1
+
 
 .sort
   &__key
     cursor: pointer
     text-decoration: underline solid $mainColor
     
+.search
+  width: 100%
+  margin-bottom: 20px
